@@ -1,0 +1,22 @@
+{
+  "name": "hwplan",
+  "version": "1.0.0",
+  "description": "Homework planner",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akvaokula/demo-hwplan.git"
+  },
+  "keywords": [
+    "homework"
+  ],
+  "author": "hwplanners",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/akvaokula/demo-hwplan/issues"
+  },
+  "homepage": "https://github.com/akvaokula/demo-hwplan#readme"
+}
