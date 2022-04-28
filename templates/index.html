@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Homework planner</title>
-  <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework planner</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
 </head>
 
 <body>
   <div>
     <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
         <li class="mr-2">
-            <a href="#" aria-current="page" class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500">Home</a>
+            <a href="#" aria-current="page" class="btn-tab-active">
+                Home
+            </a>
         </li>
         <li class="mr-2">
-            <a href="{{url_for('signup')}}" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Sign up</a>
+            <a href="{{url_for('sign_up')}}" class="btn-tab inactive">
+                Sign up
+            </a>
         </li>
         <li class="mr-2">
-            <a href="{{url_for('signin')}}" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Sign in</a>
+            <a href="{{url_for('sign_in')}}" class="btn-tab inactive">
+                Sign in
+            </a>
         </li>
         <li class="mr-2">
-            <a href="{{url_for('signedin')}}" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Signed in page (only for testing)</a>
+            <a href="{{url_for('signed_in')}}" class="btn-tab inactive">
+                Signed in page (only for testing)
+            </a>
         </li>
     </ul>
   </div>
