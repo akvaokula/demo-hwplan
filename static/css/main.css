@@ -502,16 +502,13 @@ Ensure the default browser behavior of the `hidden` attribute.
   }
 }
 
-.btn-tab {
+.btn-tab-active {
   display: inline-block;
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
-  padding: 1rem;
-}
-
-.btn-tab-active {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+  padding: 1rem;
   --tw-text-opacity: 1;
   color: rgb(37 99 235 / var(--tw-text-opacity));
 }
@@ -525,7 +522,14 @@ Ensure the default browser behavior of the `hidden` attribute.
   }
 }
 
-.btn-tab .inactive:hover {
+.btn-tab-inactive {
+  display: inline-block;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.btn-tab-inactive:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity));
   --tw-text-opacity: 1;
@@ -533,7 +537,7 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 
 @media (prefers-color-scheme: dark) {
-  .btn-tab .inactive:hover {
+  .btn-tab-inactive:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(31 41 55 / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -541,24 +545,26 @@ Ensure the default browser behavior of the `hidden` attribute.
   }
 }
 
-.alert {
-  margin-bottom: 1rem;
-  border-radius: 0.5rem;
-  --tw-bg-opacity: 1;
-  background-color: rgb(254 226 226 / var(--tw-bg-opacity));
-  padding: 1rem;
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: rgb(229 231 235 / var(--tw-border-opacity));
+  text-align: center;
   font-size: 0.875rem;
   line-height: 1.25rem;
+  font-weight: 500;
   --tw-text-opacity: 1;
-  color: rgb(185 28 28 / var(--tw-text-opacity));
+  color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 
 @media (prefers-color-scheme: dark) {
-  .alert {
-    --tw-bg-opacity: 1;
-    background-color: rgb(254 202 202 / var(--tw-bg-opacity));
+  .tabs {
+    --tw-border-opacity: 1;
+    border-color: rgb(55 65 81 / var(--tw-border-opacity));
     --tw-text-opacity: 1;
-    color: rgb(153 27 27 / var(--tw-text-opacity));
+    color: rgb(156 163 175 / var(--tw-text-opacity));
   }
 }
 
@@ -574,29 +580,12 @@ Ensure the default browser behavior of the `hidden` attribute.
   display: block;
 }
 
-.flex {
-  display: flex;
-}
-
-.flex-wrap {
-  flex-wrap: wrap;
-}
-
 .rounded {
   border-radius: 0.25rem;
 }
 
 .border {
   border-width: 1px;
-}
-
-.border-b {
-  border-bottom-width: 1px;
-}
-
-.border-gray-200 {
-  --tw-border-opacity: 1;
-  border-color: rgb(229 231 235 / var(--tw-border-opacity));
 }
 
 .bg-blue-500 {
@@ -614,26 +603,17 @@ Ensure the default browser behavior of the `hidden` attribute.
   padding-right: 1rem;
 }
 
-.text-center {
-  text-align: center;
+.font-sans {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-.text-sm {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-
-.font-medium {
-  font-weight: 500;
+.text-6xl {
+  font-size: 3.75rem;
+  line-height: 1;
 }
 
 .font-bold {
   font-weight: 700;
-}
-
-.text-gray-500 {
-  --tw-text-opacity: 1;
-  color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 
 .text-white {
@@ -648,16 +628,4 @@ Ensure the default browser behavior of the `hidden` attribute.
 .hover\:bg-blue-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(29 78 216 / var(--tw-bg-opacity));
-}
-
-@media (prefers-color-scheme: dark) {
-  .dark\:border-gray-700 {
-    --tw-border-opacity: 1;
-    border-color: rgb(55 65 81 / var(--tw-border-opacity));
-  }
-
-  .dark\:text-gray-400 {
-    --tw-text-opacity: 1;
-    color: rgb(156 163 175 / var(--tw-text-opacity));
-  }
 }

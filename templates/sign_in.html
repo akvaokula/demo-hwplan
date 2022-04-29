@@ -47,6 +47,7 @@
     </style>
 </head>
 <body>
+    {% include "components/shared_header.html" %}
     <center> <h1> Student Login Form </h1> </center>
     <form method="POST">
         <div class="container">
@@ -60,10 +61,16 @@
                 <input type="password" placeholder="Enter Password" id="password" name="password" required>
             </div>
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</button>
-            <input type="checkbox" checked="checked">
-            Remember me
-            <button type="button" class="cancelbtn">Cancel</button>
-            Forgot <a href="#"> password? </a>
+            <div>
+                <input type="checkbox" id="remember" name="remember" checked="checked">
+                <label for="remember">Remember me</label>
+            </div>
+            <div>
+                <button type="button" class="cancelbtn">Cancel</button>
+            </div>
+            <div>
+                <a href="#">Forgot password?</a>
+            </div>
         </div>
     </form>
 </body>

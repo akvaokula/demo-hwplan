@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import login_user, LoginManager, UserMixin
+from flask_login import login_user, LoginManager, UserMixin, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -38,7 +38,10 @@ def load_user(user_id):
 @app.route('/', methods=["GET", "POST"])
 @app.route('/index', methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    if current_user.is_authenticated:
+        return whats_today()
+    else:
+        return render_template("index.html")
 
 @app.route('/sign_up')
 def sign_up():
@@ -48,7 +51,7 @@ def sign_up():
 def sign_in():
     if request.method == "GET":
         # Just getting the sign in page, not signed in yet
-        return render_template("sign_in.html", error=False)
+        return render_template("sign_in.html")
 
     # Submitted the signin form
     username = request.form["username"]
@@ -63,3 +66,7 @@ def sign_in():
     # Success!
     login_user(user)
     return redirect(url_for("/"))
+
+@app.route("/whats_today", methods=["GET", "POST"])
+def whats_today():
+    return render_template("whats_today.html")

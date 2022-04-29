@@ -1,14 +1,40 @@
-<ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+{% include "components/shared_header.html" %}
+
+<ul class="tabs">
     <li class="mr-2">
-        <a href="#" aria-current="page" class="p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500">What's today</a>
+        <a href="#"
+        {% if request.url_rule.endpoint == "whats_today" %}
+            class="btn-tab-active"
+        {% else %}
+            class="btn-tab-inactive"
+        {% endif %}
+        >What's today</a>
     </li>
     <li class="mr-2">
-        <a href="#" class="p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Calendar</a>
+        <a href="#"
+        {% if request.url_rule.endpoint == "calendar" %}
+            class="btn-tab-active"
+        {% else %}
+            class="btn-tab-inactive"
+        {% endif %}
+        >Calendar</a>
     </li>
     <li class="mr-2">
-        <a href="#" class="p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Add Activity</a>
+        <a href="#"
+        {% if request.url_rule.endpoint == "add_activity" %}
+            class="btn-tab-active"
+        {% else %}
+            class="btn-tab-inactive"
+        {% endif %}
+        >Add Activity</a>
     </li>
     <li class="mr-2">
-        <a href="#" class="p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Settings</a>
+        <a href="#"
+        {% if request.url_rule.endpoint == "settings" %}
+            class="btn-tab-active"
+        {% else %}
+            class="btn-tab-inactive"
+        {% endif %}
+        >Settings</a>
     </li>
 </ul>

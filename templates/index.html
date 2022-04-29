@@ -8,31 +8,31 @@
 </head>
 
 <body>
-  <div>
-    <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
-        <li class="mr-2">
-            <a href="#" aria-current="page" class="btn-tab-active">
-                Home
-            </a>
-        </li>
-        <li class="mr-2">
-            <a href="{{url_for('sign_up')}}" class="btn-tab inactive">
-                Sign up
-            </a>
-        </li>
-        <li class="mr-2">
-            <a href="{{url_for('sign_in')}}" class="btn-tab inactive">
-                Sign in
-            </a>
-        </li>
-        <li class="mr-2">
-            <a href="{{url_for('signed_in')}}" class="btn-tab inactive">
-                Signed in page (only for testing)
-            </a>
-        </li>
-    </ul>
-  </div>
+    {% include "components/shared_header.html" %}
+    <div>
+        <ul class="tabs">
+            <li class="mr-2">
+                <a href="#" aria-current="page" class="btn-tab-active">
+                    Home
+                </a>
+            </li>
+            <li class="mr-2">
+                <a href="{{url_for('sign_up')}}" class="btn-tab-inactive">
+                    Sign up
+                </a>
+            </li>
+            <li class="mr-2">
+                <a href="{{url_for('sign_in')}}" class="btn-tab-inactive">
+                    Sign in
+                </a>
+            </li>
+            <li class="mr-2">
+                <a href="{{url_for('whats_today')}}" class="btn-tab-inactive">
+                    Signed in page (only for testing)
+                </a>
+            </li>
+        </ul>
+    </div>
 </body>
 
 </html>
-
