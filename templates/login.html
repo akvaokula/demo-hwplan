@@ -7,36 +7,33 @@
     <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
 </head>
 <body>
-    {% include "components/shared_header.html" %}
+    <!--todo add button to go back home-->
     <center> <h1> Login </h1> </center>
+    {% from "macros/form.html" import form_field with context %}
     <form method="POST">
         {% include 'components/flashes.html' %}
-        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
-            <div class="mb-4">
-                <label class="block text-gray-600 text-sm font-bold mb-2" for="username">
-                    Username
-                </label>
-                <input id="username" name="username" type="text" placeholder="username" required
-                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-600">
-            </div>
-            <div class="mb-6">
-                <label class="block text-gray-600 text-sm font-bold mb-2" for="password">
-                    Password
-                </label>
-                <input id="password" name="password" type="password" placeholder="********" required
-                       class="shadow appearance-none border border-red rounded w-full py-2 px-3 text-gray-600 mb-3">
-            </div>
-            <div>
-                <input type="checkbox" id="remember" name="remember" checked="checked">
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-6 mb-4 flex flex-col">
+            {{ form_field('Username', 'username', 'Enter username') }}
+            {{ form_field('Password', 'password', 'Enter password', type='password') }}
+            <div class="pb=4">
+                <input class="background-color: #fafafa;" type="checkbox" id="remember" name="remember" checked="checked">
                 <label for="remember">Remember me</label>
             </div>
             <div class="flex items-center justify-between">
-                <button class="bg-blue-500 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded" type="submit">
-                    Sign In
-                </button>
-                <a class="inline-block align-baseline font-bold text-sm text-sky-500 hover:text-blue-900" href="#">
-                    Forgot Password?
-                </a>
+                <button
+                    class="
+                        bg-blue-500 hover:bg-blue-900 text-white
+                        py-2 px-4
+                        font-bold
+                        rounded"
+                    type="submit">Sign In</button>
+                <a class="inline-block link" href="#">Forgot Password?</a>
+            </div>
+            <div>
+                <p class="pt-4">
+                    Don't have an account yet?
+                    <a class="inline-block link" href="{{ url_for('signup') }}">Sign up</a>
+                </p>
             </div>
         </div>
     </form>

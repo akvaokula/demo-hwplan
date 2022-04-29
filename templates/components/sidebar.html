@@ -1,6 +1,4 @@
-{% include "components/shared_header.html" %}
-
-<ul class="space-y-2 text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+<ul class="float-left space-y-2 text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
     <li class="mr-2">
         <a href="{{url_for('whats_today')}}"
         {% if request.url_rule.endpoint == "whats_today" or request.url_rule.endpoint == "index" %}
@@ -36,5 +34,8 @@
             class="btn-tab-inactive"
         {% endif %}
         >Settings</a>
+    </li>
+    <li class="mr-2">
+        <a href="{{url_for('logout')}}" class="btn-tab-inactive">Logout</a>
     </li>
 </ul>

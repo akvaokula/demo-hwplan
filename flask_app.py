@@ -44,9 +44,9 @@ def index():
     else:
         return render_template("index.html")
 
-@app.route('/sign_up')
-def sign_up():
-    return render_template("sign_up.html")
+@app.route('/signup', methods=["GET", "POST"])
+def signup():
+    return render_template("signup.html")
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -74,19 +74,33 @@ def login():
 @app.route("/whats_today", methods=["GET", "POST"])
 @login_required
 def whats_today():
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
     return render_template("whats_today.html")
 
 @app.route("/calendar", methods=["GET", "POST"])
 @login_required
 def calendar():
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
     return render_template("calendar.html")
 
 @app.route("/add_activity", methods=["GET", "POST"])
 @login_required
 def add_activity():
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
     return render_template("add_activity.html")
 
 @app.route("/settings", methods=["GET", "POST"])
 @login_required
 def settings():
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
     return render_template("settings.html")
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return render_template("index.html")

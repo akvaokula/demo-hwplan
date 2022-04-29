@@ -1,0 +1,16 @@
+{% macro form_field(label, field_name, placeholder, required=1, type=text) %}
+    <div class="mb-4">
+        <label class="block text-gray-600 text-sm font-bold mb-2" for="{{field_name}}">
+            {{label}}
+        </label>
+        <input
+            id="{{field_name}}"
+            name="{{field_name}}"
+            type="{{type}}"
+            placeholder="{{placeholder}}"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-600"
+            {% if required == 1 %}
+                required
+            {% endif %}/>
+    </div>
+{% endmacro %}

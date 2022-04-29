@@ -1,7 +1,8 @@
 module.exports = {
   content: [
       "templates/*.html", 
-      "templates/components/*.html", 
+      "templates/components/*.html",
+      "templates/macros/*.html", 
       "*.py"
   ],
   theme: {
