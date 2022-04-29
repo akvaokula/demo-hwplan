@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_login import login_user, login_required, logout_user, LoginManager, UserMixin, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -10,6 +11,7 @@ else:
     app.config.from_object("hwplan.config.DebugConfig")
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 app.secret_key = "Easd2fGJT$%IWT#UQq39ura8es"
 login_manager = LoginManager()
 login_manager.init_app(app)
