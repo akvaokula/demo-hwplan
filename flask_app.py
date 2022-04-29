@@ -75,3 +75,18 @@ def login():
 @login_required
 def whats_today():
     return render_template("whats_today.html")
+
+@app.route("/calendar", methods=["GET", "POST"])
+@login_required
+def calendar():
+    return render_template("calendar.html")
+
+@app.route("/add_activity", methods=["GET", "POST"])
+@login_required
+def add_activity():
+    return render_template("add_activity.html")
+
+@app.route("/settings", methods=["GET", "POST"])
+@login_required
+def settings():
+    return render_template("settings.html")
