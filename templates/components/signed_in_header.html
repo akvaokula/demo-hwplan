@@ -2,8 +2,8 @@
 
 <ul class="tabs">
     <li class="mr-2">
-        <a href="#"
-        {% if request.url_rule.endpoint == "whats_today" %}
+        <a href="{{url_for('whats_today')}}"
+        {% if request.url_rule.endpoint == "whats_today" or request.url_rule.endpoint == "index" %}
             class="btn-tab-active"
         {% else %}
             class="btn-tab-inactive"
