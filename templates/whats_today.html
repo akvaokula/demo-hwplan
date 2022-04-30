@@ -9,7 +9,16 @@
 
 <body>
     {% include "components/header.html" %}
+    {% include "components/flashes.html" %}
     {% include "components/sidebar.html" %}
+
+    {% for activity in activities %}
+    <div class="row">
+        <p>Activity name: {{ activity.name }}</p>
+        <p>Activity description:</p>
+        <p>{{ activity.desc }}</p>
+    </div>
+    {% endfor %}
 </body>
 
 </html>

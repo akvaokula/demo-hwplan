@@ -1,21 +1,23 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+# from flask_migrate import Migrate
 from flask_login import login_user, login_required, logout_user, LoginManager, UserMixin, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 if app.config["ENV"] == "production":
-    app.config.from_object("hwplan.config.ProductionConfig")
+    app.config.from_object("config.ProductionConfig")
 else:
-    app.config.from_object("hwplan.config.DebugConfig")
+    app.config.from_object("config.DebugConfig")
 
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+# migrate = Migrate(app, db)
 app.secret_key = "Easd2fGJT$%IWT#UQq39ura8es"
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.unauthorized_handler(lambda: redirect('/login?next=' + request.path))
+
+ACTIVITY_NAME_LEN = 30
 
 class User(UserMixin):
     def __init__(self, username, password_hash):
@@ -33,6 +35,13 @@ all_users = {
     "alice": User("alice", generate_password_hash("foo")),
     "bob": User("bob", generate_password_hash("bar"))
 }
+
+class Activity(db.Model):
+    __tablename__ = "activities"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(ACTIVITY_NAME_LEN))
+    desc = db.Column(db.String(4096))
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -78,7 +87,7 @@ def login():
 def whats_today():
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
-    return render_template("whats_today.html")
+    return render_template("whats_today.html", activities=Activity.query.all())
 
 @app.route("/calendar", methods=["GET", "POST"])
 @login_required
@@ -92,7 +101,15 @@ def calendar():
 def add_activity():
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
-    return render_template("add_activity.html")
+    elif request.method == "GET":
+        return render_template("add_activity.html")
+    else:
+        name = request.form.get("name")[:ACTIVITY_NAME_LEN]
+        desc = request.form.get("description", "")
+        activity = Activity(name=name, desc=desc)
+        db.session.add(activity)
+        db.session.commit()
+        return redirect(url_for("whats_today"))
 
 @app.route("/settings", methods=["GET", "POST"])
 @login_required

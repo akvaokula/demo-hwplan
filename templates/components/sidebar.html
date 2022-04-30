@@ -18,7 +18,7 @@
         >Calendar</a>
     </li>
     <li class="mr-2">
-        <a href="#"
+        <a href="{{url_for('add_activity')}}"
         {% if request.url_rule.endpoint == "add_activity" %}
             class="btn-tab-active"
         {% else %}

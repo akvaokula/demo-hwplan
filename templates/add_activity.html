@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework planner - Add activity</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+</head>
+<body>
+    {% include "components/header.html" %}
+    {% include "components/flashes.html" %}
+    {% include "components/sidebar.html" %}
+
+    {% from "macros/form.html" import form_field with context %}
+
+    <script src="{{url_for('static', filename='src/main.js')}}"></script>
+    <script>
+        /** Add description and other stuff to form before it's submitted */
+        function addExtraInfoToActivityForm() {
+            addDataToForm("activity-form", {
+                description: document.getElementById("description").value
+            });
+            return true;
+        }
+    </script>
+
+    <form id="activity-form" onsubmit="addExtraInfoToActivityForm()" method="POST">
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-6 mb-4 flex flex-col">
+            {{ form_field('Activity name', 'name', 'Enter activity name') }}
+            <div class="mb-4">
+                <label class="block text-gray-600 text-sm font-bold mb-2" for="description">
+                    Description
+                </label>
+                <textarea
+                    id="description"
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-600"/></textarea>
+            </div>
+            <button
+                class="
+                    bg-blue-500 hover:bg-blue-900 text-white
+                    py-2 px-4
+                    font-bold
+                    rounded"
+                type="submit">Add</button>
+        </div>
+    </form>
+</body>
+</html>
