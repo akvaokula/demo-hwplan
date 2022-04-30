@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/akvaokula/demo-hwplan/issues"
   },
-  "homepage": "https://github.com/akvaokula/demo-hwplan#readme"
+  "homepage": "https://github.com/akvaokula/demo-hwplan#readme",
+  "devDependencies": {
+    "tailwind": "^4.0.0"
+  }
 }

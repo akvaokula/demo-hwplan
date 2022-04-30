@@ -8,11 +8,28 @@
 </head>
 <body>
     <!--todo add button to go back home-->
-    <center> <h1> Login </h1> </center>
     {% from "macros/form.html" import form_field with context %}
+
     <form method="POST">
         {% include 'components/flashes.html' %}
         <div class="bg-white shadow-md rounded px-8 pt-6 pb-6 mb-4 flex flex-col">
+            <!-- From https://stackoverflow.com/a/38948646 -->
+            <ul class="flex relative flex-row justify-center items-center">
+                <li class="flex">
+                    <p>Login</p>
+                </li>
+                <li class="flex absolute top-0 right-0">
+                    <button
+                        onclick="window.location.href = '{{url_for('index')}}'"
+                        type="button">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M6 6L18 18" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </li>
+            </ul>
+
             {{ form_field('Username', 'username', 'Enter username') }}
             {{ form_field('Password', 'password', 'Enter password', type='password') }}
             <div class="pb=4">

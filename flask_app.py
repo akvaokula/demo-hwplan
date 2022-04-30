@@ -1,18 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-# from flask_migrate import Migrate
+from flask_migrate import Migrate
 from flask_login import login_user, login_required, logout_user, LoginManager, UserMixin, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 if app.config["ENV"] == "production":
-    app.config.from_object("config.ProductionConfig")
+    app.config.from_object("hwplan.config.ProductionConfig")
 else:
-    app.config.from_object("config.DebugConfig")
+    app.config.from_object("hwplan.config.DebugConfig")
 
 db = SQLAlchemy(app)
-# migrate = Migrate(app, db)
-app.secret_key = "Easd2fGJT$%IWT#UQq39ura8es"
+migrate = Migrate(app, db)
+app.secret_key = "Easd2fGJT$%IWT#UQq39ura8es" # Just random keyboard mashing
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.unauthorized_handler(lambda: redirect('/login?next=' + request.path))
@@ -59,25 +59,26 @@ def index():
 def signup():
     return render_template("signup.html")
 
+LOGIN_PAGE = "login.html"
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "GET":
         # Just getting the sign in page, not signed in yet
-        return render_template("login.html")
+        return render_template(LOGIN_PAGE)
 
     # Submitted the signin form
     username = request.form["username"]
     password = request.form["password"]
     if username not in all_users:
         flash("Wrong username or password", "alert")
-        return render_template("login.html")
+        return render_template(LOGIN_PAGE)
     user = all_users[username]
     if not user.check_password(password):
         flash("Wrong username or password", "alert")
-        return render_template("login.html")
+        return render_template(LOGIN_PAGE)
+
     # Success!
     login_user(user)
-
     # Redirect after signing in
     next_page = request.args.get("next", url_for("index"))
     return redirect(next_page)
