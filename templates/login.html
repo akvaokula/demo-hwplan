@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
 </head>
 <body>
-    <!--todo add button to go back home-->
     {% from "macros/form.html" import form_field with context %}
 
     <form method="POST">
@@ -18,20 +17,18 @@
                 <li class="flex">
                     <p>Login</p>
                 </li>
-                <li class="flex absolute top-0 right-0">
+                <!-- todo figure out why class absolute isn't working -->
+                <li class="flex absolute top-0 right-0" style="position:absolute">
                     <button
                         onclick="window.location.href = '{{url_for('index')}}'"
                         type="button">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 6L6 18" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M6 6L18 18" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
+                        <img src="{{url_for('static', filename='img/close_button.svg')}}" alt="close">
                     </button>
                 </li>
             </ul>
 
-            {{ form_field('Username', 'username', 'Enter username') }}
-            {{ form_field('Password', 'password', 'Enter password', type='password') }}
+            {{ form_field('Username', 'username', 'Enter username', extra='autocomplete="username"') }}
+            {{ form_field('Password', 'password', 'Enter password', type='password', extra='autocomplete="current-password"') }}
             <div class="pb=4">
                 <input class="background-color: #fafafa;" type="checkbox" id="remember" name="remember" checked="checked">
                 <label for="remember">Remember me</label>

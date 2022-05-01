@@ -9,17 +9,28 @@
 </head>
 
 <body>
-    <!--todo add button to go back home-->
-    <center>
-        <h1>Login</h1>
-    </center>
     {% from "macros/form.html" import form_field with context %}
+
     <form method="POST">
         {% include 'components/flashes.html' %}
         <div class="bg-white shadow-md rounded px-8 pt-6 pb-6 mb-4 flex flex-col">
-            {{ form_field('Email', 'email', 'Enter email') }}
-            {{ form_field('Username', 'username', 'Enter username') }}
-            {{ form_field('Password', 'password', 'Enter password', type='password') }}
+            <!-- From https://stackoverflow.com/a/38948646 -->
+            <ul class="flex relative flex-row justify-center items-center">
+                <li class="flex">
+                    <p>Sign up</p>
+                </li>
+                <li class="flex absolute top-0 right-0">
+                    <button
+                        onclick="window.location.href = '{{url_for('index')}}'"
+                        type="button">
+                        <img src="{{url_for('static', filename='img/close_button.svg')}}" alt="close">
+                    </button>
+                </li>
+            </ul>
+
+            {{ form_field('Email', 'email', 'Enter email', extra='autocomplete="email"') }}
+            {{ form_field('Username', 'username', 'Enter username', extra='autocomplete="username"') }}
+            {{ form_field('Password', 'password', 'Enter password', type='password', extra='autocomplete="new-password"') }}
             <div class="flex items-center justify-between">
                 <button class="bg-blue-500 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded" type="submit">
                     Sign up
