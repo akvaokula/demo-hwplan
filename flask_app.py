@@ -30,6 +30,7 @@ ACTIVITY_NAME_LEN = 30
 USERNAME_MAX_LEN = 50
 WRONG_USERNAME_OR_PASSWORD = "Wrong username or password"
 
+
 class Activity(db.Model):
     __tablename__ = "activities"
 

@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/akvaokula/demo-hwplan#readme",
   "devDependencies": {
-    "tailwind": "^4.0.0"
+    "prettier": "2.6.2",
+    "tailwind": "^2.2.0"
   }
 }
