@@ -1,1 +1,90 @@
-<img class="week-act-wireframe-1" src="week-act-wireframe-1-1.png" />
+<div class="homescreen">
+  <img class="line-2" src="line-2-1.png" />
+  <div class="flex-row">
+    <img class="line-1" src="line-1-1.png" />
+    <div class="sidebar">
+      <div class="overlap-group4">
+        <h1 class="whats-todayredrose-normal-wafer-450px">
+          <span class="redrose-normal-wafer-450px">What´s today</span>
+        </h1>
+      </div>
+      <div class="overlap-group6">
+        <img class="sidebar-rectangle" src="sidebarrectangle-6.png" />
+        <div class="calendarredrose-normal-wafer-450px">
+          <span class="redrose-normal-wafer-450px">Calendar</span>
+        </div>
+      </div>
+      <div class="overlap-group1">
+        <div class="add-activityredrose-normal-wafer-450px">
+          <span class="redrose-normal-wafer-450px">Add Activity</span>
+        </div>
+      </div>
+      <div class="overlap-group3">
+        <img class="sidebar-rectangle" src="sidebarrectangle-6.png" />
+        <div class="notificationsredrose-normal-wafer-450px">
+          <span class="redrose-normal-wafer-450px">Notifications</span>
+        </div>
+      </div>
+      <div class="overlap-group2">
+        <img class="sidebar-rectangle" src="sidebarrectangle-6.png" />
+        <div class="teachersredrose-normal-wafer-450px">
+          <span class="redrose-normal-wafer-450px">Teachers</span>
+        </div>
+      </div>
+      <div class="overlap-group5">
+        <img class="sidebar-rectangle" src="sidebarrectangle-6.png" />
+        <div class="settingsredrose-normal-wafer-450px">
+          <span class="redrose-normal-wafer-450px">Settings</span>
+        </div>
+      </div>
+    </div>
+    <div class="overlap-group-container">
+      <div class="overlap-group11">
+        <img class="week-act-wireframe-1" src="week-act-wireframe-1-1.png" />
+      </div>
+      <div class="overlap-group7">
+        <div class="surnameroboto-normal-black-300px">
+          <span class="roboto-normal-black-300px"
+            >English
+            Project&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Today</span
+          >
+        </div>
+      </div>
+      <div class="overlap-group9">
+        <div class="study-for-math-test-tomorrowroboto-normal-black-300px">
+          <span class="roboto-normal-black-300px"
+            >Study for Math
+            Test&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tomorrow</span
+          >
+        </div>
+      </div>
+      <div class="overlap-group8">
+        <div class="world-history-notes-312roboto-normal-black-300px">
+          <span class="roboto-normal-black-300px"
+            >World History
+            Notes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            3/12</span
+          >
+        </div>
+      </div>
+      <div class="overlap-group10">
+        <div class="spanish-presentation-next-weekroboto-normal-black-300px">
+          <span class="roboto-normal-black-300px"
+            >Spanish
+            Presentation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Next Week</span
+          >
+        </div>
+      </div>
+    </div>
+    <div class="overlap-group">
+      <div class="rectangle-42"></div>
+      <div class="rectangle-39"></div>
+      <img class="up-arrow" src="up-arrow-1.png" /><img
+        class="down-arrow"
+        src="down-arrow-1.png"
+      />
+    </div>
+  </div>
+</div>
