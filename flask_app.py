@@ -27,39 +27,37 @@ login_manager.init_app(app)
 login_manager.unauthorized_handler(lambda: redirect("/login?next=" + request.path))
 
 ACTIVITY_NAME_LEN = 30
-
-
-class User(UserMixin):
-    def __init__(self, username, password_hash):
-        self.username = username
-        self.password_hash = password_hash
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-    def get_id(self):
-        return self.username
-
-
-all_users = {
-    "admin": User("admin", generate_password_hash("secret")),
-    "alice": User("alice", generate_password_hash("foo")),
-    "bob": User("bob", generate_password_hash("bar")),
-}
-
+USERNAME_MAX_LEN = 50
+WRONG_USERNAME_OR_PASSWORD = "Wrong username or password"
 
 class Activity(db.Model):
     __tablename__ = "activities"
 
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
     name = db.Column(db.String(ACTIVITY_NAME_LEN))
     desc = db.Column(db.String(4096))
     due = db.Column(db.DateTime, default=datetime.now)
 
 
+class User(db.Model, UserMixin):
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(4096))
+    username = db.Column(db.String(USERNAME_MAX_LEN))
+    password_hash = db.Column(db.String(4096))
+
+    def get_id(self):
+        return self.id
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
 @login_manager.user_loader
 def load_user(user_id):
-    return all_users.get(user_id)
+    return User.query.get(user_id)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -73,7 +71,28 @@ def index():
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
-    return render_template("signup.html")
+    if request.method == "GET":
+        return render_template("signup.html")
+
+    email = request.form["email"]
+    username = request.form["username"]
+    password = request.form["password"]
+    password_confirm = request.form["password_confirm"]
+
+    if len(username) > USERNAME_MAX_LEN:
+        flash(f"Username can't be longer than {USERNAME_MAX_LEN} characters", "alert")
+        return render_template("signup.html")
+    elif password != password_confirm:
+        flash("Passwords must match", "alert")
+        return render_template("signup.html")
+
+    password_hash = generate_password_hash(password)
+    user = User(email=email, username=username, password_hash=password_hash)
+    db.session.add(user)
+    db.session.commit()
+
+    login_user(user)
+    return redirect(url_for("index"))
 
 
 LOGIN_PAGE = "login.html"
@@ -88,12 +107,15 @@ def login():
     # Submitted the signin form
     username = request.form["username"]
     password = request.form["password"]
-    if username not in all_users:
-        flash("Wrong username or password", "alert")
+
+    matched_users = User.query.filter_by(username=username)
+    if not matched_users:
+        flash(WRONG_USERNAME_OR_PASSWORD, "alert")
         return render_template(LOGIN_PAGE)
-    user = all_users[username]
+
+    user = matched_users[0]
     if not user.check_password(password):
-        flash("Wrong username or password", "alert")
+        flash(WRONG_USERNAME_OR_PASSWORD, "alert")
         return render_template(LOGIN_PAGE)
 
     # Success!
@@ -108,7 +130,8 @@ def login():
 def whats_today():
     if not current_user.is_authenticated:
         return redirect(url_for("index"))
-    return render_template("whats_today.html", activities=Activity.query.all())
+    activities = Activity.query.filter_by(user_id=current_user.id)
+    return render_template("whats_today.html", activities=activities)
 
 
 @app.route("/calendar", methods=["GET", "POST"])
@@ -129,7 +152,8 @@ def add_activity():
     else:
         name = request.form.get("name")[:ACTIVITY_NAME_LEN]
         desc = request.form.get("description", "")
-        activity = Activity(name=name, desc=desc)
+        due = request.form.get("due", datetime.now)
+        activity = Activity(user_id=current_user.id, name=name, desc=desc, due=due)
         db.session.add(activity)
         db.session.commit()
         return redirect(url_for("whats_today"))
@@ -147,7 +171,7 @@ def settings():
 @login_required
 def logout():
     logout_user()
-    return render_template("index.html")
+    return redirect(url_for("index"))
 
 
 @app.route("/delete_activity", methods=["GET", "POST"])
@@ -155,7 +179,7 @@ def logout():
 def delete_activity():
     activityId = request.form.get("activityId")
     if activityId is not None:
-        Activity.query.filter_by(id=activityId).delete()
+        Activity.query.filter_by(id=activityId, user_id=current_user.id).delete()
         db.session.commit()
     else:
         flash("Activity id not given when deleting", "alert")
