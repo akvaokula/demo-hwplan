@@ -20,11 +20,7 @@
                     <p>Sign up</p>
                 </li>
                 <li class="flex absolute top-0 right-0">
-                    <button
-                        onclick="window.location.href = '{{url_for('index')}}'"
-                        type="button">
-                        <img src="{{url_for('static', filename='img/close_button.svg')}}" alt="close">
-                    </button>
+                    <a class="inline-block link" href="{{ url_for('index') }}">Back home</a>
                 </li>
             </ul>
 

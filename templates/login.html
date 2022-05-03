@@ -19,18 +19,14 @@
                 </li>
                 <!-- todo figure out why class absolute isn't working -->
                 <li class="flex absolute top-0 right-0" style="position:absolute">
-                    <button
-                        onclick="window.location.href = '{{url_for('index')}}'"
-                        type="button">
-                        <img src="{{url_for('static', filename='img/close_button.svg')}}" alt="close">
-                    </button>
+                    <a class="inline-block link" href="{{ url_for('index') }}">Back home</a>
                 </li>
             </ul>
 
             {{ form_field('Username', 'username', 'Enter username', extra='autocomplete="username"') }}
             {{ form_field('Password', 'password', 'Enter password', type='password', extra='autocomplete="current-password"') }}
             <div class="pb=4">
-                <input class="background-color: #fafafa;" type="checkbox" id="remember" name="remember" checked="checked">
+                <input class="bg-blue-500 hover:bg-blue-900" type="checkbox" id="remember" name="remember" checked="checked">
                 <label for="remember">Remember me</label>
             </div>
             <div class="flex items-center justify-between">

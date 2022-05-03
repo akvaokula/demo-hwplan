@@ -124,3 +124,14 @@ def settings():
 def logout():
     logout_user()
     return render_template("index.html")
+
+@app.route("/delete_activity", methods=["GET", "POST"])
+@login_required
+def delete_activity():
+    activityId = request.form.get("activityId")
+    if activityId is not None:
+        Activity.query.filter_by(id=activityId).delete()
+        db.session.commit()
+    else:
+        flash("Activity id not given when deleting", "alert")
+    return redirect(url_for("whats_today"))

@@ -12,11 +12,29 @@
     {% include "components/flashes.html" %}
     {% include "components/sidebar.html" %}
 
+    <script>
+        // function deleteActivity(elemId, activityId) {
+        //     alert(activityId);
+        //     postRequest("{{url_for('delete_activity')}}", activityId)
+        //         .then(() => alert("Request completed"))
+        // }
+    </script>
+
     {% for activity in activities %}
-    <div class="row">
-        <p>Activity name: {{ activity.name }}</p>
-        <p>Activity description:</p>
-        <p>{{ activity.desc }}</p>
+    <div class="">
+        <!-- todo this is kinda janky, figure out how to do it with plain JS -->
+        <form action="{{url_for('delete_activity')}}" method="POST">
+            <input id="activityId" name="activityId" type="hidden" value="{{activity.id}}">
+            <button
+                type="submit">
+                Delete activity
+            </button>
+        </form>
+        <details>
+            <summary>Activity name: {{ activity.name }}</summary>
+            <p>Activity description:</p>
+            <p>{{ activity.desc }}</p>
+        </details>
     </div>
     {% endfor %}
 </body>

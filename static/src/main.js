@@ -21,3 +21,12 @@ function addDataToForm(formId, data) {
 
     return form;
 }
+
+/** Send a post request */
+function postRequest(url, data) {
+    return fetch(url, {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+}
