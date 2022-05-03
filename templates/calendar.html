@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homework planner - Calendar</title>
+  <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}">
+</head>
+
+<body>
+    {% include "components/header.html" %}
+    {% include "components/flashes.html" %}
+    {% include "components/sidebar.html" %}
+
+    {% if month_view %}
+        {% for week in month %}
+            <div>
+
+            </div>
+        {% endfor %}
+    {% else %}
+        {% for activity in activities %}
+        <div class="">
+            <!-- todo this is kinda janky, figure out how to do it with plain JS -->
+            <form action="{{url_for('delete_activity')}}" method="POST">
+                <input id="activityId" name="activityId" type="hidden" value="{{activity.id}}">
+                <button
+                    type="submit">
+                    Delete activity
+                </button>
+            </form>
+            <details>
+                <summary>Activity name: {{ activity.name }}</summary>
+                <p>Activity description:</p>
+                <p>{{ activity.desc }}</p>
+            </details>
+        </div>
+        {% endfor %}
+    {% endif %}
+    
+</body>
+
+</html>

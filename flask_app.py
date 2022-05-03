@@ -135,12 +135,15 @@ def whats_today():
     return render_template("whats_today.html", activities=activities)
 
 
-@app.route("/calendar", methods=["GET", "POST"])
+@app.route("/calendar", methods=["GET"])
 @login_required
 def calendar():
     if not current_user.is_authenticated:
         return redirect(url_for("index"))
-    return render_template("calendar.html")
+    year = request.args["year"]
+    month = request.args["month"]
+    day = request.args.get("day")
+    return render_template("calendar.html", month_view=day is not None)
 
 
 @app.route("/add_activity", methods=["GET", "POST"])
