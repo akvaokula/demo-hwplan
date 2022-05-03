@@ -1,0 +1,109 @@
+css
+/* Mask group */
+
+
+position: absolute;
+width: 100px;
+height: 100px;
+
+
+
+/* Home */
+
+
+position: relative;
+width: 13424px;
+height: 10336px;
+
+background: #DCCCCC;
+
+
+/* Frame 3 */
+
+
+position: relative;
+width: 38805px;
+height: 22211px;
+
+
+
+/* Settings */
+
+
+position: relative;
+width: 14136px;
+height: 11058px;
+
+background: #FFFFFF;
+
+
+/* Notifications */
+
+
+position: relative;
+width: 14136px;
+height: 11058px;
+overflow-y: scroll;
+
+background: #FFFFFF;
+
+
+/* Add activity */
+
+
+position: relative;
+width: 14136px;
+height: 11058px;
+
+background: #FFFFFF;
+
+
+/* PageTemplate */
+
+
+position: relative;
+width: 14136px;
+height: 11058px;
+
+background: #FFFFFF;
+
+
+/* Sidebar */
+
+
+position: relative;
+width: 3490px;
+height: 16022px;
+
+border: 1px dashed #7B61FF;
+box-sizing: border-box;
+border-radius: 5px;
+
+
+/* SidebarRectangle */
+
+
+position: relative;
+width: 3450px;
+height: 1160px;
+
+border-radius: 10px;
+
+
+/* Scrollbar */
+
+
+/* Auto layout */
+
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 2169px 0px;
+
+position: relative;
+width: 6432px;
+height: 18976px;
+
+border: 1px dashed #7B61FF;
+box-sizing: border-box;
+border-radius: 5px;
