@@ -11,33 +11,52 @@
     {% include "components/header.html" %}
     {% include "components/flashes.html" %}
     {% include "components/sidebar.html" %}
+    <!-- https://tailwindcomponents.com/component/calendar-ui-with-tailwindcss-and-alpinejs-->
+
+    <script>
+        const months = [
+            "January", 
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"];
+        function getMonthName(month) {
+            return months[month - 1];
+        }
+    </script>
 
     {% if month_view %}
-        {% for week in month %}
-            <div>
-
+        <div>
+            <p>{% month %} </p>
+            <div class="grid grid-cols-7">
+                <div>Monday</div>
+                <div>Tuesday</div>
+                <div>Wednesday</div>
+                <div>Thursday</div>
+                <div>Friday</div>
+                <div>Saturday</div>
+                <div>Sunday</div>
+                {% for day in days %}
+                    <div>
+                        day
+                    </div>
+                {% endfor %}
             </div>
-        {% endfor %}
+        </div>
     {% else %}
         {% for activity in activities %}
-        <div class="">
-            <!-- todo this is kinda janky, figure out how to do it with plain JS -->
-            <form action="{{url_for('delete_activity')}}" method="POST">
-                <input id="activityId" name="activityId" type="hidden" value="{{activity.id}}">
-                <button
-                    type="submit">
-                    Delete activity
-                </button>
-            </form>
-            <details>
-                <summary>Activity name: {{ activity.name }}</summary>
-                <p>Activity description:</p>
-                <p>{{ activity.desc }}</p>
-            </details>
+        <div>
         </div>
         {% endfor %}
     {% endif %}
-    
+
 </body>
 
 </html>
