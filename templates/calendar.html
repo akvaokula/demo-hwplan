@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Homework planner - Calendar</title>
-  <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework planner - Calendar</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}">
 </head>
 
 <body>
+    <style>
+        .day:nth-child(1) {
+            grid-column: {{first_day}};
+            background-color: lime;
+        }
+    </style>
     {% include "components/header.html" %}
     {% include "components/flashes.html" %}
     {% include "components/sidebar.html" %}
@@ -34,8 +40,8 @@
 
     {% if month_view %}
         <div>
-            <p>{% month %} </p>
-            <div class="grid grid-cols-7">
+            <p>{{ month }} </p>
+            <div class="grid grid-cols-7 content-center">
                 <div>Monday</div>
                 <div>Tuesday</div>
                 <div>Wednesday</div>
@@ -44,7 +50,7 @@
                 <div>Saturday</div>
                 <div>Sunday</div>
                 {% for day in days %}
-                    <div>
+                    <div class="day">
                         day
                     </div>
                 {% endfor %}

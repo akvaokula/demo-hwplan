@@ -140,10 +140,17 @@ def whats_today():
 def calendar():
     if not current_user.is_authenticated:
         return redirect(url_for("index"))
-    year = request.args.get("year", datetime.now().year)
-    month = request.args.get("month", datetime.now().month)
+    year = int(request.args.get("year", datetime.now().year))
+    month = int(request.args.get("month", datetime.now().month))
     day = request.args.get("day")
-    return render_template("calendar.html", month_view=day is None, days=list(range(31)))
+    if day is None:
+        first_day_date = datetime(year, month, 1)
+        # Get which day of the week the first day of the month is
+        # to offset the start of the calendar
+        first_day = first_day_date.weekday()
+        # todo get proper date objects or something
+        days = list(range(31))
+        return render_template("calendar.html", month_view=True, first_day=first_day, days=days)
 
 
 @app.route("/add_activity", methods=["GET", "POST"])

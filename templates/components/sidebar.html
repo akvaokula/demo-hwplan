@@ -9,7 +9,7 @@
         >What's today</a>
     </li>
     <li class="mr-2">
-        <a href="#"
+        <a href="{{url_for('calendar')}}"
         {% if request.url_rule.endpoint == "calendar" %}
             class="btn-tab-active"
         {% else %}
@@ -24,7 +24,7 @@
         {% else %}
             class="btn-tab-inactive"
         {% endif %}
-        >Add Activity</a>
+        >Add activity</a>
     </li>
     <li class="mr-2">
         <a href="#"
