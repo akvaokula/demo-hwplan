@@ -50,7 +50,11 @@
                 <div>Saturday</div>
                 <div>Sunday</div>
                 {% for day in days %}
-                    <div class="day">
+                    <div 
+                        {% if loop.index0 == 0 %}
+                            style="grid-column-start:{{first_day+1}}"
+                        {% endif %} 
+                        >
                         day
                     </div>
                 {% endfor %}
