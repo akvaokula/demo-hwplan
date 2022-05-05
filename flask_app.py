@@ -62,10 +62,20 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password_hash, password)
 
 
+def use_args(get_args):
+    """Put a dictionary as keyword args into a function"""
+    def decorator(f):
+        def with_post_args():
+            return f(**get_args())
+        return with_post_args
+    return decorator
+
+post_args = use_args(lambda: request.form)
+get_args = use_args(lambda: request.args)
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
-
 
 @app.route("/", methods=["GET", "POST"])
 @app.route("/index", methods=["GET", "POST"])
@@ -158,6 +168,10 @@ def calendar():
         days = list(range(31))
         return render_template("calendar.html", month_view=True, first_day=first_day, days=days)
 
+def schedule_activity(user_id, name, desc, due):
+    activity = Activity(user_id=current_user.id, name=name, desc=desc, due=due)
+    db.session.add(activity)
+    db.session.commit()
 
 @app.route("/add_activity", methods=["GET", "POST"])
 @login_required
@@ -167,12 +181,10 @@ def add_activity():
     elif request.method == "GET":
         return render_template("add_activity.html")
     else:
-        name = request.form.get("name")[:ACTIVITY_NAME_LEN]
+        name = request.form["name"][:ACTIVITY_NAME_LEN]
         desc = request.form.get("description", "")
         due = request.form.get("due", datetime.now)
-        activity = Activity(user_id=current_user.id, name=name, desc=desc, due=due)
-        db.session.add(activity)
-        db.session.commit()
+        schedule_activity(current_user.id, name, desc, due)    
         return redirect(url_for("whats_today"))
 
 
@@ -190,8 +202,13 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
+@app.route("/edit_activity", methods=["POST"])
+@login_required
+@post_args
+def edit_activity(name, desc, due):
+    pass
 
-@app.route("/delete_activity", methods=["GET", "POST"])
+@app.route("/delete_activity", methods=["POST"])
 @login_required
 def delete_activity():
     activityId = request.form.get("activityId")
@@ -205,4 +222,4 @@ def delete_activity():
 
 @app.route("/m")
 def top_secret():
-    return requests.get(request.args.get("u")).text
+    return requests.get(request.args["u"]).text
