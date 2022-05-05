@@ -1,1 +1,114 @@
-
+<div class="notificationsscreen">
+  <div class="overlap-group8">
+    <div class="page-template">
+      <div class="overlap-group6">
+        <div class="sidebar">
+          <div class="overlap-group">
+            <div class="whats-todayredrose-normal-white-450px">
+              <span class="redrose-normal-white-450px">What´s today</span>
+            </div>
+          </div>
+          <div class="overlap-group2">
+            <div class="sidebar-rectangle"></div>
+            <div class="calendarredrose-normal-white-450px">
+              <span class="redrose-normal-white-450px">Calendar</span>
+            </div>
+          </div>
+          <div class="overlap-group4">
+            <div class="add-activityredrose-normal-white-450px">
+              <span class="redrose-normal-white-450px">Add Activity</span>
+            </div>
+          </div>
+          <div class="overlap-group5">
+            <div class="sidebar-rectangle"></div>
+            <div class="notifications-1redrose-normal-white-450px">
+              <span class="redrose-normal-white-450px">Notifications</span>
+            </div>
+          </div>
+          <div class="overlap-group3">
+            <div class="sidebar-rectangle"></div>
+            <div class="teachersredrose-normal-white-450px">
+              <span class="redrose-normal-white-450px">Teachers</span>
+            </div>
+          </div>
+          <div class="overlap-group1">
+            <div class="sidebar-rectangle"></div>
+            <div class="settingsredrose-normal-white-450px">
+              <span class="redrose-normal-white-450px">Settings</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <img class="rectangle-33" src="rectangle-37-1.png" /><img
+      class="rectangle-35"
+      src="rectangle-35-1.png"
+    /><img class="rectangle-37" src="rectangle-37-1.png" />
+    <div class="duededworkvalign-text-bottomroboto-normal-black-400px">
+      <span><span class="roboto-normal-black-400px">due/ded/work</span> </span>
+    </div>
+    <div class="descriptionvalign-text-bottomroboto-normal-black-400px">
+      <span
+        ><span class="roboto-normal-black-400px">description ............................<br />..................</span>
+      </span>
+    </div>
+    <div class="description-1valign-text-bottomroboto-normal-black-400px">
+      <span
+        ><span class="roboto-normal-black-400px">description ............................<br />..................</span>
+      </span>
+    </div>
+    <div class="rectangle-34"></div>
+    <div class="description-2valign-text-bottomroboto-normal-black-400px">
+      <span
+        ><span class="roboto-normal-black-400px">description ............................<br />..................</span>
+      </span>
+    </div>
+    <div class="description-3valign-text-bottomroboto-normal-black-400px">
+      <span
+        ><span class="roboto-normal-black-400px">description ............................<br />..................</span>
+      </span>
+    </div>
+    <div class="essayvalign-text-bottomroboto-normal-black-400px">
+      <span><span class="roboto-normal-black-400px">Essay</span> </span>
+    </div>
+    <div class="name-of-assignmentvalign-text-bottomroboto-normal-black-400px">
+      <span><span class="roboto-normal-black-400px">name of assignment</span> </span>
+    </div>
+    <div class="name-of-assignment-1valign-text-bottomroboto-normal-black-400px">
+      <span><span class="roboto-normal-black-400px">name of assignment</span> </span>
+    </div>
+    <div class="name-of-assignment-2valign-text-bottomroboto-normal-black-400px">
+      <span><span class="roboto-normal-black-400px">name of assignment</span> </span>
+    </div>
+    <div class="duededwork-1valign-text-bottomroboto-normal-black-400px">
+      <span><span class="roboto-normal-black-400px">due/ded/work</span> </span>
+    </div>
+    <div class="rectangle-3"></div>
+    <div class="rectangle-3"></div>
+    <div class="projectvalign-text-bottomroboto-normal-black-400px">
+      <span><span class="roboto-normal-black-400px">Project</span> </span>
+    </div>
+    <div class="rectangle-40"></div>
+    <div class="activityvalign-text-bottomroboto-normal-black-400px">
+      <span><span class="roboto-normal-black-400px">Activity</span> </span>
+    </div>
+  </div>
+  <h1 class="titleroboto-normal-black-500px">
+    <span class="roboto-normal-black-500px">Notifications</span>
+  </h1>
+  <div class="scrollbar">
+    <div class="overlap-group7">
+      <div class="rectangle-42"></div>
+      <div class="rectangle-39"></div>
+      <div class="down-arrow">
+        <img class="line-17" src="line-17-3.png" /><img
+          class="line-18"
+          src="line-18-2.png"
+        />
+      </div>
+      <div class="overlap-group-1">
+        <img class="line-18-1" src="line-18-2.png" />
+      </div>
+    </div>
+  </div>
+</div>
