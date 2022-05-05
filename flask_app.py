@@ -40,6 +40,12 @@ class Activity(db.Model):
     desc = db.Column(db.String(4096))
     due = db.Column(db.DateTime, default=datetime.now)
 
+class ActivityChunk(db.Model):
+    __tablename__ = "chunks"
+    id = db.Column(db.Integer, primary_key=True)
+    activity_id = db.Column(db.Integer)
+    start_time = db.Column(db.DateTime)
+    end_time = db.Column(db.DateTime)
 
 class User(db.Model, UserMixin):
     __tablename__ = "users"
