@@ -27,8 +27,10 @@
     <form id="activity-form" onsubmit="addExtraInfoToActivityForm()" method="POST">
         <div class="bg-white shadow-md rounded px-8 pt-6 pb-6 mb-4 flex flex-col">
             {{ form_field('Activity name', 'name', 'Enter activity name') }}
-            <!--input id="due" name="due" type="datetime-local"-->
-            {{ form_field('Due date', 'due', '', type='datetime-local', required=1) }}
+            {{ form_field('Due date', 'due', '', type='datetime-local') }}
+            {{ form_field('Estimated time required', 'time', 'Enter time in minutes', type='number', extra='min="0"') }}
+            {{ form_field('Earliest date to start', 'start_date', '', type='date', required=0) }}
+            {{ form_field('Max time to spend per day', 'max_time', 'Enter time in minutes', type='number', extra='min="10"') }}
             <div class="mb-4">
                 <label class="block text-gray-600 text-sm font-bold mb-2" for="description">
                     Description

@@ -55,7 +55,22 @@
                             style="grid-column-start:{{first_day+1}}"
                         {% endif %} 
                         >
-                        day
+                        <div class="
+                            inline-flex 
+                            w-6 h-6 
+                            items-center 
+                            justify-center 
+                            cursor-pointer 
+                            text-center 
+                            leading-none 
+                            rounded-full 
+                            transition 
+                            ease-in-out 
+                            duration-100
+                            bg-gray-200 hover:bg-gray-300
+                            ">
+                            {{loop.index0 + 1}}</div>
+                        <p>{{day}}</p> 
                     </div>
                 {% endfor %}
             </div>
