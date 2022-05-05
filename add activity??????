@@ -1,0 +1,65 @@
+<div class="add-activityscreen">
+  <div class="overlap-group3">
+    <div class="page-template">
+      <div class="overlap-group1">
+        <div class="sidebar">
+          <div class="overlap-group">
+            <div class="sidebar-rectangle"></div>
+            <div class="sidebar-rectangle"></div>
+            <div class="sidebar-rectangle"></div>
+            <div class="sidebar-rectangle"></div>
+            <div class="sidebar-rectangle"></div>
+            <div class="sidebar-rectangle"></div>
+            <div class="whats-todayredrose-normal-white-450px">
+              <span class="redrose-normal-white-450px">What´s today</span>
+            </div>
+            <div class="calendarredrose-normal-white-450px">
+              <span class="redrose-normal-white-450px">Calendar</span>
+            </div>
+            <div class="add-activity-1redrose-normal-white-450px">
+              <span class="redrose-normal-white-450px">Add Activity</span>
+            </div>
+            <div class="settingsredrose-normal-white-450px">
+              <span class="redrose-normal-white-450px">Settings</span>
+            </div>
+            <div class="teachersredrose-normal-white-450px">
+              <span class="redrose-normal-white-450px">Teachers</span>
+            </div>
+            <div class="notificationsredrose-normal-white-450px">
+              <span class="redrose-normal-white-450px">Notifications</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="overlap-group2">
+      <div class="overlap-group2-itemroboto-normal-black-400px">
+        <span class="roboto-normal-black-400px">Name</span>
+      </div>
+      <img class="rectangle-28" src="rectangle-28-1.png" />
+      <div class="overlap-group2-itemroboto-normal-black-400px">
+        <span class="roboto-normal-black-400px">Subject</span>
+      </div>
+      <div class="rectangle-32"></div>
+      <div class="overlap-group2-itemroboto-normal-black-400px">
+        <span class="roboto-normal-black-400px">Notes</span>
+      </div>
+      <img class="rectangle-29" src="rectangle-29-1.png" />
+      <div class="overlap-group2-itemroboto-normal-black-400px">
+        <span class="roboto-normal-black-400px">Priority</span>
+      </div>
+      <div class="priority-button">
+        <div class="rectangle-31"></div>
+      </div>
+    </div>
+    <div class="save-activity-button">
+      <div class="save-activityroboto-normal-white-450px">
+        <span class="roboto-normal-white-450px">Save activity</span>
+      </div>
+    </div>
+    <img class="line-15" src="line-15-1.png" /><img class="line-16" src="line-16-1.png" />
+  </div>
+  <h1 class="titleroboto-normal-black-500px">
+    <span class="roboto-normal-black-500px">Add activity</span>
+  </h1>
+</div>
