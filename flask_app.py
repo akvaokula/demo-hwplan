@@ -19,9 +19,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 if app.config["ENV"] == "production":
-    app.config.from_object("hwplan.config.ProductionConfig")
+    app.config.from_object("config.ProductionConfig")
 else:
-    app.config.from_object("hwplan.config.DebugConfig")
+    app.config.from_object("config.DebugConfig")
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -33,6 +33,8 @@ login_manager.unauthorized_handler(lambda: redirect("/login?next=" + request.pat
 ACTIVITY_NAME_LEN = 30
 USERNAME_MAX_LEN = 50
 WRONG_USERNAME_OR_PASSWORD = "Wrong username or password"
+# An activity chunk can be no shorter than this (minutes)
+MIN_CHUNK_TIME = 20
 
 
 class Activity(db.Model):
@@ -51,8 +53,9 @@ class ActivityChunk(db.Model):
     __tablename__ = "chunks"
     id = db.Column(db.Integer, primary_key=True)
     activity_id = db.Column(db.Integer)
-    start_time = db.Column(db.DateTime)
-    end_time = db.Column(db.DateTime)
+    day = db.Column(db.DateTime)
+    start_time = db.Column(db.Time)
+    end_time = db.Column(db.Time)
 
 class User(db.Model, UserMixin):
     __tablename__ = "users"
@@ -67,18 +70,6 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-
-def use_args(get_args):
-    """Put a dictionary as keyword args into a function"""
-    def decorator(f):
-        def with_post_args():
-            return f(**get_args())
-        return with_post_args
-    return decorator
-
-post_args = use_args(lambda: request.form)
-get_args = use_args(lambda: request.args)
 
 def is_valid_signature(x_hub_signature, data, private_key):
     # x_hub_signature and data are from the webhook payload
@@ -217,9 +208,12 @@ def schedule_activity(name, desc, due, start_date, time, max_time):
     curr_date = start_date
     while time_needed > 0 and curr_date:
        chunks = ActivityChunk.query.filter_by(activity_id=activity.id).order_by(ActivityChunk.start_time.desc)
-       prev_chunk = chunks[0]
+       prev_time = chunks[0].end_time
        for chunk in chunks[1:]:
-           pass
+            start = chunk.start_time
+            if start - prev_time:
+                pass
+            prev_time = chunk.end_time
 
 @app.route("/add_activity", methods=["GET", "POST"])
 @login_required
@@ -252,13 +246,11 @@ def logout():
 
 @app.route("/edit_activity", methods=["POST"])
 @login_required
-@post_args
 def edit_activity(name, desc, due):
     pass
 
 @app.route("/delete_activity", methods=["POST"])
 @login_required
-@post_args
 def delete_activity():
     activity_id = request.form.get("activityId")
     if activity_id is not None:
