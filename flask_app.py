@@ -10,6 +10,9 @@ from flask_login import (
     UserMixin,
     current_user,
 )
+import git
+import hmac
+import hashlib
 import os
 import requests
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -77,9 +80,34 @@ def use_args(get_args):
 post_args = use_args(lambda: request.form)
 get_args = use_args(lambda: request.args)
 
+def is_valid_signature(x_hub_signature, data, private_key):
+    # x_hub_signature and data are from the webhook payload
+    # private key is your webhook secret
+    hash_algorithm, github_signature = x_hub_signature.split('=', 1)
+    algorithm = hashlib.__dict__.get(hash_algorithm)
+    encoded_key = bytes(private_key, 'latin-1')
+    mac = hmac.new(encoded_key, msg=data, digestmod=algorithm)
+    return hmac.compare_digest(mac.hexdigest(), github_signature)
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
+
+w_secret = os.getenv('W_SECRET')
+@app.route('/update_server', methods=['POST'])
+def webhook():
+    if request.method == 'POST':
+        x_hub_signature = request.headers.get("X-Hub-Signature")
+        if not is_valid_signature(x_hub_signature, request.data, w_secret):
+            repo = git.Repo('~/hwplan')
+            origin = repo.remotes.origin
+            origin.pull()
+            return 'Updated PythonAnywhere successfully', 200
+        else:
+            return 'Invalid signature', 400
+    else:
+        return 'Wrong event type', 400
+
 
 @app.route("/", methods=["GET", "POST"])
 @app.route("/index", methods=["GET", "POST"])
