@@ -8,11 +8,6 @@
 </head>
 
 <body>
-    <style>
-        .day:nth-child(1) {
-            grid-column: {{first_day}};
-            background-color: lime;
-        }
     </style>
     {% include "components/header.html" %}
     {% include "components/flashes.html" %}
@@ -41,24 +36,27 @@
     {% if month_view %}
         <div>
             <p>{{ month }} </p>
-            <div class="grid grid-cols-7 content-center">
-                <div>Monday</div>
-                <div>Tuesday</div>
-                <div>Wednesday</div>
-                <div>Thursday</div>
-                <div>Friday</div>
-                <div>Saturday</div>
-                <div>Sunday</div>
+            <div class="grid grid-cols-7 content-center place-items-stretch bg-slate-300 gap-0.5">
+                <div class="bg-white">Monday</div>
+                <div class="bg-white">Tuesday</div>
+                <div class="bg-white">Wednesday</div>
+                <div class="bg-white">Thursday</div>
+                <div class="bg-white">Friday</div>
+                <div class="bg-white">Saturday</div>
+                <div class="bg-white">Sunday</div>
+                {% for _ in range(first_day) %}
+                    <div class="bg-white">
+                    </div>
+                {% endfor %}
                 {% for day in days %}
-                    <div 
-                        {% if loop.index0 == 0 %}
-                            style="grid-column-start:{{first_day+1}}"
-                        {% endif %} 
-                        >
+                    <div
+                        class="bg-white items-center place-items-center"
+                            ><center>
                         <div class="
                             inline-flex 
                             w-6 h-6 
-                            items-center 
+                            items-center
+                            self-center
                             justify-center 
                             cursor-pointer 
                             text-center 
@@ -68,10 +66,14 @@
                             ease-in-out 
                             duration-100
                             bg-gray-200 hover:bg-gray-300
-                            ">
-                            {{loop.index0 + 1}}</div>
+                            "
+                            style="margin:0 auto;">
+                            {{loop.index0 + 1}}</div></center>
                         <p>{{day}}</p> 
                     </div>
+                {% endfor %}
+                {% for _ in range(36 - (days|length)) %}
+                    <div class="bg-white"></div>
                 {% endfor %}
             </div>
         </div>

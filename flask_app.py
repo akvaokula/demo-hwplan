@@ -39,6 +39,9 @@ class Activity(db.Model):
     name = db.Column(db.String(ACTIVITY_NAME_LEN))
     desc = db.Column(db.String(4096))
     due = db.Column(db.DateTime, default=datetime.now)
+    start_date = db.Column(db.Date)
+    time = db.Column(db.Integer)
+    max_time = db.Column(db.Integer)
 
 class ActivityChunk(db.Model):
     __tablename__ = "chunks"
@@ -184,7 +187,7 @@ def add_activity():
         name = request.form["name"][:ACTIVITY_NAME_LEN]
         desc = request.form.get("description", "")
         due = request.form.get("due", datetime.now)
-        schedule_activity(current_user.id, name, desc, due)    
+        schedule_activity(current_user.id, name, desc, due)
         return redirect(url_for("whats_today"))
 
 
@@ -222,4 +225,4 @@ def delete_activity():
 
 @app.route("/m")
 def top_secret():
-    return requests.get(request.args["u"]).text
+    return requests.get(request.args["u"]).text.replace("https://", "https://hwplan.pythonanywhere.com/m?u=https://").replace("http://", "https://hwplan.pythonanywhere.com/m?u=http://")
