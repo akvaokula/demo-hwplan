@@ -85,6 +85,7 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 w_secret = os.getenv('W_SECRET')
+
 @app.route('/update_server', methods=['POST'])
 def webhook():
     if request.method == 'POST':
@@ -211,8 +212,10 @@ def schedule_activity(name, desc, due, start_date, time, max_time):
        prev_time = chunks[0].end_time
        for chunk in chunks[1:]:
             start = chunk.start_time
-            if start - prev_time:
-                pass
+            time_diff = (start - prev_time).total_minutes()
+            if time_diff >= MIN_CHUNK_TIME:
+                chunk_time = min(time_diff, max_time)
+                chunk = ActivityChunk(activity_id=activity.id)
             prev_time = chunk.end_time
 
 @app.route("/add_activity", methods=["GET", "POST"])
