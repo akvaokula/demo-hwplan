@@ -1,5 +1,5 @@
-from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash
+from datetime import datetime, timedelta
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import (
@@ -10,6 +10,7 @@ from flask_login import (
     UserMixin,
     current_user,
 )
+import os
 import requests
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -144,6 +145,10 @@ def login():
     next_page = request.args.get("next", url_for("index"))
     return redirect(next_page)
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route("/whats_today", methods=["GET", "POST"])
 @login_required
@@ -171,10 +176,22 @@ def calendar():
         days = list(range(31))
         return render_template("calendar.html", month_view=True, first_day=first_day, days=days)
 
-def schedule_activity(user_id, name, desc, due):
-    activity = Activity(user_id=current_user.id, name=name, desc=desc, due=due)
+# From https://stackoverflow.com/a/1060330
+def daterange(start_date, end_date):
+    for n in range(int((end_date - start_date).days)):
+        yield start_date + timedelta(n)
+
+def schedule_activity(name, desc, due, start_date, time, max_time):
+    activity = Activity(user_id=current_user.id, name=name, desc=desc, due=due, start_date=start_date, time=time, max_time=max_time)
     db.session.add(activity)
     db.session.commit()
+    time_needed = time
+    curr_date = start_date
+    while time_needed > 0 and curr_date:
+       chunks = ActivityChunk.query.filter_by(activity_id=activity.id).order_by(ActivityChunk.start_time.desc)
+       prev_chunk = chunks[0]
+       for chunk in chunks[1:]:
+           pass
 
 @app.route("/add_activity", methods=["GET", "POST"])
 @login_required
@@ -213,10 +230,12 @@ def edit_activity(name, desc, due):
 
 @app.route("/delete_activity", methods=["POST"])
 @login_required
+@post_args
 def delete_activity():
-    activityId = request.form.get("activityId")
-    if activityId is not None:
+    activity_id = request.form.get("activityId")
+    if activity_id is not None:
         Activity.query.filter_by(id=activityId, user_id=current_user.id).delete()
+        ActivityChunk.query.filter_by(activity_id=activity_id, user_id=current_user.id).delete()
         db.session.commit()
     else:
         flash("Activity id not given when deleting", "alert")
