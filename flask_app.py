@@ -68,9 +68,11 @@ class ActivityChunk(db.Model):
     __tablename__ = "chunks"
     id = db.Column(db.Integer, primary_key=True)
     activity_id = db.Column(db.Integer)
-    day = db.Column(db.DateTime)
-    start_time = db.Column(db.Time)
-    end_time = db.Column(db.Time)
+    start_time = db.Column(db.DateTime)
+    end_time = db.Column(db.DateTime)
+
+    def __str__(self):
+        return f"ActivityChunk(actId={self.activity_id}, day={self.day}, start={self.start_time}, end={self.end_time})"
 
 
 class User(db.Model, UserMixin):
@@ -203,7 +205,11 @@ def whats_today():
     if not current_user.is_authenticated:
         return redirect(url_for("index"))
     activities = Activity.query.filter_by(user_id=current_user.id)
-    return render_template("whats_today.html", activities=activities)
+    chunkWithActs = []
+    for activity in activities:
+        for chunk in ActivityChunk.query.filter_by(activity_id=activity.id):
+            chunkWithActs.append((activity, chunk))
+    return render_template("whats_today.html", chunkWithActs=chunkWithActs)
 
 
 @app.route("/calendar", methods=["GET"])
@@ -252,17 +258,18 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
         # max_time=max_time,
     )
     db.session.add(activity)
-    db.session.commit()
 
     time_needed = int(time_needed)
     max_time = int(max_time)
     curr_date = start_date
-    while time_needed > 0 and curr_date < due.date():
+    it = 1
+    while it < 5 and time_needed > 0 and curr_date < due.date():
+        it += 1
         chunks = ActivityChunk.query.filter_by(activity_id=activity.id).order_by(
-            ActivityChunk.start_time.desc()
+            ActivityChunk.start_time
         )
         # Start at midnight
-        prev_time = time(0, 0, 0)
+        prev_time = datetime.combine(curr_date, time(0, 0, 0))
         # Add a dummy chunk for the end of the day
         chunks = list(chunks) + [
             ActivityChunk(
@@ -272,29 +279,31 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
                 end_time=time(23, 0, 0))
             ]
         for chunk in chunks:
-            start = datetime.combine(date.min, chunk.start_time)
-            end = datetime.combine(date.min, chunk.end_time)
-            time_diff = (start - end).total_seconds() // 60 - 2 * BREAK_TIME
+            end = datetime.combine(curr_date, chunk.end_time)
+            time_diff = (end - prev_time).total_seconds() // 60 - 2 * BREAK_TIME
             # How much time can be spent on the activity today
             today_time = max_time
+            # raise Exception(f"start:{start},end:{end},timediff:{time_diff}")
             if time_diff >= MIN_CHUNK_TIME:
                 chunk_time = min(time_needed, min(time_diff, max_time))
-                start_time = prev_time + BREAK_TIME
+                start_time = prev_time + timedelta(minutes=BREAK_TIME)
+                end_time = start_time + timedelta(chunk_time)
                 new_chunk = ActivityChunk(
                     activity_id=activity.id,
                     day=chunk.day,
-                    start_time=start_time,
-                    end_time=start_time + chunk_time,
+                    start_time=start_time.time(),
+                    end_time=end_time.time(),
                 )
                 time_needed -= chunk_time
                 today_time -= chunk_time
                 db.session.add(new_chunk)
-                db.session.commit()
-            prev_time = chunk.end_time
+            prev_time = datetime.combine(curr_date, chunk.end_time)
             if time_needed <= 0:
                 break
             if today_time < MIN_CHUNK_TIME:
                 break
+        curr_date += timedelta(days=1)
+    db.session.commit()
 
 @app.route("/add_activity", methods=["GET", "POST"])
 @login_required
@@ -302,7 +311,7 @@ def add_activity():
     if not current_user.is_authenticated:
         return redirect(url_for("index"))
     elif request.method == "GET":
-        return render_template("add_activity.html")
+        return render_template("add_activity.html", now=datetime.now())
     else:
         name = request.form["name"][:ACTIVITY_NAME_LEN]
         desc = request.form.get("description", "")

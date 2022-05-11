@@ -20,7 +20,7 @@
         // }
     </script>
 
-    {% for activity in activities %}
+    {% for (activity, chunk) in chunkWithActs %}
     <div class="">
         <!-- todo this is kinda janky, figure out how to do it with plain JS -->
         <form action="{{url_for('delete_activity')}}" method="POST">
@@ -33,6 +33,7 @@
         <details>
             <summary>Activity name: {{ activity.name }}</summary>
             <p>Activity description:</p>
+            <p>{{ chunk }}</p>
             <p>{{ activity.desc }}</p>
         </details>
     </div>
