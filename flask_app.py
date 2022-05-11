@@ -269,7 +269,7 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
     max_time = int(max_time)
     curr_date = start_date
     it = 1
-    while it < 5 and time_needed > 0 and curr_date < due.date():
+    while time_needed > 0 and curr_date < due.date():
         it += 1
         chunks = ActivityChunk.query.filter_by(activity_id=activity.id).order_by(
             ActivityChunk.start_time
@@ -288,8 +288,6 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
             time_diff = (
                 chunk.end_time - prev_time
             ).total_seconds() // 60 - 2 * BREAK_TIME
-            # How much time can be spent on the activity today
-            today_time = max_time
             # raise Exception(f"start:{start},end:{end},timediff:{time_diff}")
             if time_diff >= MIN_CHUNK_TIME or time_needed < MIN_CHUNK_TIME:
                 chunk_time = min(time_needed, min(time_diff, max_time))
@@ -301,14 +299,13 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
                     end_time=end_time,
                 )
                 time_needed -= chunk_time
-                today_time -= chunk_time
                 db.session.add(new_chunk)
+                break
             prev_time = chunk.end_time
             if time_needed <= 0:
                 break
-            if today_time < MIN_CHUNK_TIME:
-                break
         curr_date += timedelta(days=1)
+        # raise Exception(f"{time_needed}, {curr_date}")
     db.session.commit()
 
 
