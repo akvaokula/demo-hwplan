@@ -341,6 +341,8 @@ def settings():
         chunk_time = request.form.get("chunk_time", current_user.chunk_time)
         current_user.break_time = int(break_time)
         current_user.chunk_time = int(chunk_time)
+        db.session.commit()
+        return redirect(url_for("index"))
 
 
 @app.route("/logout")
