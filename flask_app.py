@@ -43,10 +43,6 @@ login_manager.unauthorized_handler(lambda: redirect("/login?next=" + request.pat
 ACTIVITY_NAME_LEN = 30
 USERNAME_MAX_LEN = 50
 WRONG_USERNAME_OR_PASSWORD = "Wrong username or password"
-# An activity chunk can be no shorter than this (minutes)
-MIN_CHUNK_TIME = 20
-# How long to wait between activities
-BREAK_TIME = 10
 DATE_FORMAT = "%Y-%m-%d"
 TIME_FORMAT = "%H:%M"
 
@@ -82,6 +78,10 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(4096))
     username = db.Column(db.String(USERNAME_MAX_LEN))
     password_hash = db.Column(db.String(4096))
+    # An activity chunk can be no shorter than this (minutes)
+    break_time = 15
+    # How long to wait between activities
+    chunk_time = 10
 
     def get_id(self):
         return self.id
@@ -287,11 +287,11 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
         for chunk in chunks:
             time_diff = (
                 chunk.end_time - prev_time
-            ).total_seconds() // 60 - 2 * BREAK_TIME
+            ).total_seconds() // 60 - 2 * current_user.break_time
             # raise Exception(f"start:{start},end:{end},timediff:{time_diff}")
-            if time_diff >= MIN_CHUNK_TIME or time_needed < MIN_CHUNK_TIME:
+            if time_diff >= current_user.chunk_time or time_needed < current_user.chunk_time:
                 chunk_time = min(time_needed, min(time_diff, max_time))
-                start_time = prev_time + timedelta(minutes=BREAK_TIME)
+                start_time = prev_time + timedelta(minutes=current_user.break_time)
                 end_time = start_time + timedelta(minutes=chunk_time)
                 new_chunk = ActivityChunk(
                     activity_id=activity.id,
@@ -320,7 +320,7 @@ def add_activity():
         name = request.form["name"][:ACTIVITY_NAME_LEN]
         desc = request.form.get("description", "")
         due = request.form.get("due")
-        start_date = request.form.get("start_date")
+        start_date = request.form.get("start_date", datetime.now().strftime(DATE_FORMAT))
         time_needed = request.form.get("time")
         max_time = request.form.get("max_time", time)
         schedule_activity(
@@ -334,7 +334,13 @@ def add_activity():
 def settings():
     if not current_user.is_authenticated:
         return redirect(url_for("index"))
-    return render_template("settings.html")
+    if request.method == "GET":
+        return render_template("settings.html")
+    else:
+        break_time = request.form.get("break_time", current_user.break_time)
+        chunk_time = request.form.get("chunk_time", current_user.chunk_time)
+        current_user.break_time = int(break_time)
+        current_user.chunk_time = int(chunk_time)
 
 
 @app.route("/logout")

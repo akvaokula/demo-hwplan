@@ -27,7 +27,7 @@
         >Add activity</a>
     </li>
     <li class="mr-2">
-        <a href="#"
+        <a href="{{url_for('settings')}}"
         {% if request.url_rule.endpoint == "settings" %}
             class="btn-tab-active"
         {% else %}
