@@ -197,7 +197,7 @@ def favicon():
     )
 
 
-@app.route("/whats_today", methods=["GET", "POST"])
+@app.route("/whats_today", methods=["GET"])
 @login_required
 def whats_today():
     if not current_user.is_authenticated:
