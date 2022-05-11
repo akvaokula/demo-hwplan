@@ -1,6 +1,6 @@
 import calendar as calend
 from collections import namedtuple
-from datetime import datetime, time, timedelta
+from datetime import datetime, time, date, timedelta
 from flask import (
     Flask,
     render_template,
@@ -47,6 +47,8 @@ WRONG_USERNAME_OR_PASSWORD = "Wrong username or password"
 MIN_CHUNK_TIME = 20
 # How long to wait between activities
 BREAK_TIME = 10
+DATE_FORMAT = "%Y-%m-%d"
+TIME_FORMAT = "%H:%M"
 
 
 class Activity(db.Model):
@@ -58,7 +60,7 @@ class Activity(db.Model):
     desc = db.Column(db.String(4096))
     due = db.Column(db.DateTime, default=datetime.now)
     start_date = db.Column(db.Date)
-    time = db.Column(db.Integer)
+    time_needed = db.Column(db.Integer)
     max_time = db.Column(db.Integer)
 
 
@@ -219,8 +221,7 @@ def calendar():
         days = []
         for day in range(1, num_days + 1):
             today = []
-            date = datetime(year, month, day)
-            chunks = ActivityChunk.query.filter_by(day=date)
+            chunks = ActivityChunk.query.filter_by(day=datetime(year, month, day))
             for chunk in chunks:
                 activity = Activity.query.get(chunk.activity_id)
                 today.append(ChunkWithActivity(activity=activity, chunk=chunk))
@@ -237,31 +238,45 @@ def daterange(start_date, end_date):
         yield start_date + timedelta(n)
 
 
-def schedule_activity(id, name, desc, due, start_date, time, max_time):
+def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
+    due = datetime.strptime(due, f"{DATE_FORMAT}T{TIME_FORMAT}")
+    start_date = datetime.strptime(start_date, DATE_FORMAT).date()
+
     activity = Activity(
         user_id=current_user.id,
         name=name,
         desc=desc,
-        due=due,
-        start_date=start_date,
-        time=time,
-        max_time=max_time,
+        due=due.strftime(f"{DATE_FORMAT} {TIME_FORMAT}"),
+        # start_date=start_date.strftime(DATE_FORMAT),
+        time_needed=time_needed,
+        # max_time=max_time,
     )
     db.session.add(activity)
     db.session.commit()
-    time_needed = time
+
+    time_needed = int(time_needed)
+    max_time = int(max_time)
     curr_date = start_date
-    while time_needed > 0 and curr_date < due:
+    while time_needed > 0 and curr_date < due.date():
         chunks = ActivityChunk.query.filter_by(activity_id=activity.id).order_by(
             ActivityChunk.start_time.desc()
         )
         # Start at midnight
         prev_time = time(0, 0, 0)
         # Add a dummy chunk for the end of the day
-        chunks = list(chunks) + [ActivityChunk(activity_id=activity.id, day=curr_date, start_time=time(24, 0, 0), end_time=time(24, 0, 0))]
+        chunks = list(chunks) + [
+            ActivityChunk(
+                activity_id=activity.id,
+                day=curr_date,
+                start_time=time(23, 0, 0),
+                end_time=time(23, 0, 0))
+            ]
         for chunk in chunks:
-            start = chunk.start_time
-            time_diff = (start - prev_time).total_minutes() - 2 * BREAK_TIME
+            start = datetime.combine(date.min, chunk.start_time)
+            end = datetime.combine(date.min, chunk.end_time)
+            time_diff = (start - end).total_seconds() // 60 - 2 * BREAK_TIME
+            # How much time can be spent on the activity today
+            today_time = max_time
             if time_diff >= MIN_CHUNK_TIME:
                 chunk_time = min(time_needed, min(time_diff, max_time))
                 start_time = prev_time + BREAK_TIME
@@ -272,12 +287,14 @@ def schedule_activity(id, name, desc, due, start_date, time, max_time):
                     end_time=start_time + chunk_time,
                 )
                 time_needed -= chunk_time
+                today_time -= chunk_time
                 db.session.add(new_chunk)
                 db.session.commit()
             prev_time = chunk.end_time
             if time_needed <= 0:
                 break
-
+            if today_time < MIN_CHUNK_TIME:
+                break
 
 @app.route("/add_activity", methods=["GET", "POST"])
 @login_required
@@ -291,9 +308,9 @@ def add_activity():
         desc = request.form.get("description", "")
         due = request.form.get("due")
         start_date = request.form.get("start_date")
-        time = request.form.get("time")
+        time_needed = request.form.get("time")
         max_time = request.form.get("max_time", time)
-        schedule_activity(current_user.id, name, desc, due, start_date, int(time), int(max_time))
+        schedule_activity(current_user.id, name, desc, due, start_date, time_needed, max_time)
         return redirect(url_for("whats_today"))
 
 
@@ -323,10 +340,8 @@ def edit_activity(name, desc, due):
 def delete_activity():
     activity_id = request.form.get("activityId")
     if activity_id is not None:
-        Activity.query.filter_by(id=activityId, user_id=current_user.id).delete()
-        ActivityChunk.query.filter_by(
-            activity_id=activity_id, user_id=current_user.id
-        ).delete()
+        Activity.query.filter_by(id=activity_id, user_id=current_user.id).delete()
+        ActivityChunk.query.filter_by(activity_id=activity_id).delete()
         db.session.commit()
     else:
         flash("Activity id not given when deleting", "alert")
