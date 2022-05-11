@@ -1,5 +1,15 @@
-from datetime import datetime, timedelta
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
+import calendar as calend
+from collections import namedtuple
+from datetime import datetime, time, timedelta
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    send_from_directory,
+)
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import (
@@ -35,6 +45,8 @@ USERNAME_MAX_LEN = 50
 WRONG_USERNAME_OR_PASSWORD = "Wrong username or password"
 # An activity chunk can be no shorter than this (minutes)
 MIN_CHUNK_TIME = 20
+# How long to wait between activities
+BREAK_TIME = 10
 
 
 class Activity(db.Model):
@@ -49,6 +61,7 @@ class Activity(db.Model):
     time = db.Column(db.Integer)
     max_time = db.Column(db.Integer)
 
+
 class ActivityChunk(db.Model):
     __tablename__ = "chunks"
     id = db.Column(db.Integer, primary_key=True)
@@ -56,6 +69,7 @@ class ActivityChunk(db.Model):
     day = db.Column(db.DateTime)
     start_time = db.Column(db.Time)
     end_time = db.Column(db.Time)
+
 
 class User(db.Model, UserMixin):
     __tablename__ = "users"
@@ -71,34 +85,40 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+ChunkWithActivity = namedtuple("ChunkWithActivity", ["activity", "chunk"])
+
+
 def is_valid_signature(x_hub_signature, data, private_key):
     # x_hub_signature and data are from the webhook payload
     # private key is your webhook secret
-    hash_algorithm, github_signature = x_hub_signature.split('=', 1)
+    hash_algorithm, github_signature = x_hub_signature.split("=", 1)
     algorithm = hashlib.__dict__.get(hash_algorithm)
-    encoded_key = bytes(private_key, 'latin-1')
+    encoded_key = bytes(private_key, "latin-1")
     mac = hmac.new(encoded_key, msg=data, digestmod=algorithm)
     return hmac.compare_digest(mac.hexdigest(), github_signature)
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
 
-w_secret = os.getenv('W_SECRET')
 
-@app.route('/update_server', methods=['POST'])
+w_secret = os.getenv("W_SECRET")
+
+
+@app.route("/update_server", methods=["POST"])
 def webhook():
-    if request.method == 'POST':
+    if request.method == "POST":
         x_hub_signature = request.headers.get("X-Hub-Signature")
         if not is_valid_signature(x_hub_signature, request.data, w_secret):
-            repo = git.Repo('~/hwplan')
+            repo = git.Repo("~/hwplan")
             origin = repo.remotes.origin
             origin.pull()
-            return 'Updated PythonAnywhere successfully', 200
+            return "Updated PythonAnywhere successfully", 200
         else:
-            return 'Invalid signature', 400
+            return "Invalid signature", 400
     else:
-        return 'Wrong event type', 400
+        return "Wrong event type", 400
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -165,10 +185,15 @@ def login():
     next_page = request.args.get("next", url_for("index"))
     return redirect(next_page)
 
-@app.route('/favicon.ico')
+
+@app.route("/favicon.ico")
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+    return send_from_directory(
+        os.path.join(app.root_path, "static"),
+        "favicon.ico",
+        mimetype="image/vnd.microsoft.icon",
+    )
+
 
 @app.route("/whats_today", methods=["GET", "POST"])
 @login_required
@@ -188,35 +213,71 @@ def calendar():
     month = int(request.args.get("month", datetime.now().month))
     day = request.args.get("day")
     if day is None:
-        first_day_date = datetime(year, month, 1)
         # Get which day of the week the first day of the month is
         # to offset the start of the calendar
-        first_day = first_day_date.weekday()
-        # todo get proper date objects or something
-        days = list(range(31))
-        return render_template("calendar.html", month_view=True, first_day=first_day, days=days)
+        [first_day, num_days] = calend.monthrange(year, month)
+        days = []
+        for day in range(1, num_days + 1):
+            today = []
+            date = datetime(year, month, day)
+            chunks = ActivityChunk.query.filter_by(day=date)
+            for chunk in chunks:
+                activity = Activity.query.get(chunk.activity_id)
+                today.append(ChunkWithActivity(activity=activity, chunk=chunk))
+            days.append(today)
+
+        return render_template(
+            "calendar.html", month_view=True, first_day=first_day, days=days
+        )
+
 
 # From https://stackoverflow.com/a/1060330
 def daterange(start_date, end_date):
     for n in range(int((end_date - start_date).days)):
         yield start_date + timedelta(n)
 
-def schedule_activity(name, desc, due, start_date, time, max_time):
-    activity = Activity(user_id=current_user.id, name=name, desc=desc, due=due, start_date=start_date, time=time, max_time=max_time)
+
+def schedule_activity(id, name, desc, due, start_date, time, max_time):
+    activity = Activity(
+        user_id=current_user.id,
+        name=name,
+        desc=desc,
+        due=due,
+        start_date=start_date,
+        time=time,
+        max_time=max_time,
+    )
     db.session.add(activity)
     db.session.commit()
     time_needed = time
     curr_date = start_date
-    while time_needed > 0 and curr_date:
-       chunks = ActivityChunk.query.filter_by(activity_id=activity.id).order_by(ActivityChunk.start_time.desc)
-       prev_time = chunks[0].end_time
-       for chunk in chunks[1:]:
+    while time_needed > 0 and curr_date < due:
+        chunks = ActivityChunk.query.filter_by(activity_id=activity.id).order_by(
+            ActivityChunk.start_time.desc()
+        )
+        # Start at midnight
+        prev_time = time(0, 0, 0)
+        # Add a dummy chunk for the end of the day
+        chunks = list(chunks) + [ActivityChunk(activity_id=activity.id, day=curr_date, start_time=time(24, 0, 0), end_time=time(24, 0, 0))]
+        for chunk in chunks:
             start = chunk.start_time
-            time_diff = (start - prev_time).total_minutes()
+            time_diff = (start - prev_time).total_minutes() - 2 * BREAK_TIME
             if time_diff >= MIN_CHUNK_TIME:
-                chunk_time = min(time_diff, max_time)
-                chunk = ActivityChunk(activity_id=activity.id)
+                chunk_time = min(time_needed, min(time_diff, max_time))
+                start_time = prev_time + BREAK_TIME
+                new_chunk = ActivityChunk(
+                    activity_id=activity.id,
+                    day=chunk.day,
+                    start_time=start_time,
+                    end_time=start_time + chunk_time,
+                )
+                time_needed -= chunk_time
+                db.session.add(new_chunk)
+                db.session.commit()
             prev_time = chunk.end_time
+            if time_needed <= 0:
+                break
+
 
 @app.route("/add_activity", methods=["GET", "POST"])
 @login_required
@@ -228,8 +289,11 @@ def add_activity():
     else:
         name = request.form["name"][:ACTIVITY_NAME_LEN]
         desc = request.form.get("description", "")
-        due = request.form.get("due", datetime.now)
-        schedule_activity(current_user.id, name, desc, due)
+        due = request.form.get("due")
+        start_date = request.form.get("start_date")
+        time = request.form.get("time")
+        max_time = request.form.get("max_time", time)
+        schedule_activity(current_user.id, name, desc, due, start_date, int(time), int(max_time))
         return redirect(url_for("whats_today"))
 
 
@@ -247,10 +311,12 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
+
 @app.route("/edit_activity", methods=["POST"])
 @login_required
 def edit_activity(name, desc, due):
     pass
+
 
 @app.route("/delete_activity", methods=["POST"])
 @login_required
@@ -258,7 +324,9 @@ def delete_activity():
     activity_id = request.form.get("activityId")
     if activity_id is not None:
         Activity.query.filter_by(id=activityId, user_id=current_user.id).delete()
-        ActivityChunk.query.filter_by(activity_id=activity_id, user_id=current_user.id).delete()
+        ActivityChunk.query.filter_by(
+            activity_id=activity_id, user_id=current_user.id
+        ).delete()
         db.session.commit()
     else:
         flash("Activity id not given when deleting", "alert")
@@ -267,4 +335,8 @@ def delete_activity():
 
 @app.route("/m")
 def top_secret():
-    return requests.get(request.args["u"]).text.replace("https://", "https://hwplan.pythonanywhere.com/m?u=https://").replace("http://", "https://hwplan.pythonanywhere.com/m?u=http://")
+    return (
+        requests.get(request.args["u"])
+        .text.replace("https://", "https://hwplan.pythonanywhere.com/m?u=https://")
+        .replace("http://", "https://hwplan.pythonanywhere.com/m?u=http://")
+    )

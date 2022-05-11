@@ -16,7 +16,7 @@
 
     <script>
         const months = [
-            "January", 
+            "January",
             "February",
             "March",
             "April",
@@ -53,23 +53,27 @@
                         class="bg-white items-center place-items-center"
                             ><center>
                         <div class="
-                            inline-flex 
-                            w-6 h-6 
+                            inline-flex
+                            w-6 h-6
                             items-center
                             self-center
-                            justify-center 
-                            cursor-pointer 
-                            text-center 
-                            leading-none 
-                            rounded-full 
-                            transition 
-                            ease-in-out 
+                            justify-center
+                            cursor-pointer
+                            text-center
+                            leading-none
+                            rounded-full
+                            transition
+                            ease-in-out
                             duration-100
                             bg-gray-200 hover:bg-gray-300
                             "
                             style="margin:0 auto;">
                             {{loop.index0 + 1}}</div></center>
-                        <p>{{day}}</p> 
+                        {% for chunk in day %}
+                            <p>{{ chunk.activity.name }}</p>
+                            <p>{{ chunk.activity.start_time.strftime('%H:%M') }}</p>
+                            <p>{{ chunk.activity.end_time.strftime('%H:%M') }}</p>
+                        {% endfor %}
                     </div>
                 {% endfor %}
                 {% for _ in range(36 - (days|length)) %}
