@@ -25,7 +25,6 @@ import hmac
 import hashlib
 import os
 import requests
-from sqlalchemy import func
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -89,6 +88,7 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
 
 ChunkWithActivity = namedtuple("ChunkWithActivity", ["activity", "chunk"])
 
@@ -228,10 +228,15 @@ def calendar():
         days = []
         for day in range(1, num_days + 1):
             today = []
-            chunks = ActivityChunk.query.filter_by(func.DATE(ActivityChunk.start_time) == date(year, month, day))
+            start_of_day = datetime(year, month, day)
+            end_of_day = start_of_day + timedelta(days=1)
+            chunks = ActivityChunk.query.filter(
+                ActivityChunk.start_time >= start_of_day,
+                ActivityChunk.end_time <= end_of_day,
+            )
             for chunk in chunks:
                 activity = Activity.query.get(chunk.activity_id)
-                today.append(ChunkWithActivity(activity=activity, chunk=chunk))
+                today.append((activity, chunk))
             days.append(today)
 
         return render_template(
@@ -276,18 +281,20 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
             ActivityChunk(
                 activity_id=activity.id,
                 start_time=datetime.combine(curr_date, time(23, 0, 0)),
-                end_time=datetime.combine(curr_date, time(23, 0, 0))
-                )
-            ]
+                end_time=datetime.combine(curr_date, time(23, 0, 0)),
+            )
+        ]
         for chunk in chunks:
-            time_diff = (chunk.end_time - prev_time).total_seconds() // 60 - 2 * BREAK_TIME
+            time_diff = (
+                chunk.end_time - prev_time
+            ).total_seconds() // 60 - 2 * BREAK_TIME
             # How much time can be spent on the activity today
             today_time = max_time
             # raise Exception(f"start:{start},end:{end},timediff:{time_diff}")
-            if time_diff >= MIN_CHUNK_TIME:
+            if time_diff >= MIN_CHUNK_TIME or time_needed < MIN_CHUNK_TIME:
                 chunk_time = min(time_needed, min(time_diff, max_time))
                 start_time = prev_time + timedelta(minutes=BREAK_TIME)
-                end_time = start_time + timedelta(chunk_time)
+                end_time = start_time + timedelta(minutes=chunk_time)
                 new_chunk = ActivityChunk(
                     activity_id=activity.id,
                     start_time=start_time,
@@ -304,6 +311,7 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
         curr_date += timedelta(days=1)
     db.session.commit()
 
+
 @app.route("/add_activity", methods=["GET", "POST"])
 @login_required
 def add_activity():
@@ -318,7 +326,9 @@ def add_activity():
         start_date = request.form.get("start_date")
         time_needed = request.form.get("time")
         max_time = request.form.get("max_time", time)
-        schedule_activity(current_user.id, name, desc, due, start_date, time_needed, max_time)
+        schedule_activity(
+            current_user.id, name, desc, due, start_date, time_needed, max_time
+        )
         return redirect(url_for("whats_today"))
 
 

@@ -69,10 +69,10 @@
                             "
                             style="margin:0 auto;">
                             {{loop.index0 + 1}}</div></center>
-                        {% for chunk in day %}
-                            <p>{{ chunk.activity.name }}</p>
-                            <p>{{ chunk.activity.start_time.strftime('%H:%M') }}</p>
-                            <p>{{ chunk.activity.end_time.strftime('%H:%M') }}</p>
+                        {% for (activity, chunk) in day %}
+                            <p>{{ activity.name }}</p>
+                            <p>{{ chunk.start_time.strftime('%H:%M') }}</p>
+                            <p>{{ chunk.end_time.strftime('%H:%M') }}</p>
                         {% endfor %}
                     </div>
                 {% endfor %}
