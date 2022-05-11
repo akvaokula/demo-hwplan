@@ -25,6 +25,7 @@ import hmac
 import hashlib
 import os
 import requests
+from sqlalchemy import func
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -72,7 +73,7 @@ class ActivityChunk(db.Model):
     end_time = db.Column(db.DateTime)
 
     def __str__(self):
-        return f"ActivityChunk(actId={self.activity_id}, day={self.day}, start={self.start_time}, end={self.end_time})"
+        return f"ActivityChunk(actId={self.activity_id}, start={self.start_time}, end={self.end_time})"
 
 
 class User(db.Model, UserMixin):
@@ -227,7 +228,7 @@ def calendar():
         days = []
         for day in range(1, num_days + 1):
             today = []
-            chunks = ActivityChunk.query.filter_by(day=datetime(year, month, day))
+            chunks = ActivityChunk.query.filter_by(func.DATE(ActivityChunk.start_time) == date(year, month, day))
             for chunk in chunks:
                 activity = Activity.query.get(chunk.activity_id)
                 today.append(ChunkWithActivity(activity=activity, chunk=chunk))
@@ -255,7 +256,7 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
         due=due.strftime(f"{DATE_FORMAT} {TIME_FORMAT}"),
         # start_date=start_date.strftime(DATE_FORMAT),
         time_needed=time_needed,
-        # max_time=max_time,
+        max_time=max_time,
     )
     db.session.add(activity)
 
@@ -274,13 +275,12 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
         chunks = list(chunks) + [
             ActivityChunk(
                 activity_id=activity.id,
-                day=curr_date,
-                start_time=time(23, 0, 0),
-                end_time=time(23, 0, 0))
+                start_time=datetime.combine(curr_date, time(23, 0, 0)),
+                end_time=datetime.combine(curr_date, time(23, 0, 0))
+                )
             ]
         for chunk in chunks:
-            end = datetime.combine(curr_date, chunk.end_time)
-            time_diff = (end - prev_time).total_seconds() // 60 - 2 * BREAK_TIME
+            time_diff = (chunk.end_time - prev_time).total_seconds() // 60 - 2 * BREAK_TIME
             # How much time can be spent on the activity today
             today_time = max_time
             # raise Exception(f"start:{start},end:{end},timediff:{time_diff}")
@@ -290,14 +290,13 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
                 end_time = start_time + timedelta(chunk_time)
                 new_chunk = ActivityChunk(
                     activity_id=activity.id,
-                    day=chunk.day,
-                    start_time=start_time.time(),
-                    end_time=end_time.time(),
+                    start_time=start_time,
+                    end_time=end_time,
                 )
                 time_needed -= chunk_time
                 today_time -= chunk_time
                 db.session.add(new_chunk)
-            prev_time = datetime.combine(curr_date, chunk.end_time)
+            prev_time = chunk.end_time
             if time_needed <= 0:
                 break
             if today_time < MIN_CHUNK_TIME:
