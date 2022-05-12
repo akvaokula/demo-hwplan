@@ -19,11 +19,11 @@
 
     {% if month_view %}
         <div>
-            <center>
-                <a href="{{url_for('calendar', year=prev_month_year, month=prev_month)}}"></a>
-                <p class="text-lg font-bold">{{ month_name }} </p>
-                <a href="{{url_for('calendar', year=next_month_year, month=next_month)}}"></a>
-            </center>
+            <div class="flex flex-row justify-center items-center pb-5">
+                <a href="{{url_for('calendar', year=prev_month_year, month=prev_month)}}">&lt;</a>
+                <p class="text-lg font-bold px-5">{{ month_name }} </p>
+                <a href="{{url_for('calendar', year=next_month_year, month=next_month)}}">&gt;</a>
+            </div>
             <div class="grid grid-cols-7 content-center place-items-stretch bg-slate-300 gap-0.5">
                 <div class="bg-white">Monday</div>
                 <div class="bg-white">Tuesday</div>
@@ -32,15 +32,14 @@
                 <div class="bg-white">Friday</div>
                 <div class="bg-white">Saturday</div>
                 <div class="bg-white">Sunday</div>
-                {% for _ in range(first_day) %}
-                    <div class="bg-white">
-                    </div>
-                {% endfor %}
+
+                {% for _ in range(first_day) %}<div class="bg-white"></div>{% endfor %}
+
                 {% for day in days %}
                     <div
                         class="bg-white p-1 items-center place-items-center">
                         <center>
-                            <a href="{{url_for('calendar', year=year, month=month, day=loop.index0)}}">
+                            <a href="{{url_for('calendar', year=year, month=month, day=loop.index)}}">
                         <div class="
                             inline-flex
                             w-6 h-6 p-0.5

@@ -266,9 +266,13 @@ def calendar():
             month_name=calend.month_name[month],
             year=year,
             month=month,
+            prev_month_year = year - 1 if month == 1 else year,
+            prev_month = 12 if month == 1 else month - 1,
+            next_month_year = year + 1 if month == 12 else year,
+            next_month = 1 if month == 12 else month + 1,
             first_day=first_day,
             days=days,
-            today=datetime.today().day
+            today=datetime.today().day if datetime.today().year == year and datetime.today().month == month else 0
         )
     else: # Day view
         day = int(day)
