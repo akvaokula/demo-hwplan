@@ -60,12 +60,31 @@ class Activity(db.Model):
     max_time = db.Column(db.Integer)
 
 
+class Block(db.Model):
+    __tablename__ = "blocks"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    name = db.Column(db.String(ACTIVITY_NAME_LEN))
+    # This should actually be 2 fields. It combines the start date of the block and the start time
+    start_date_time = db.Column(db.DateTime)
+    end_date_time = db.Column(db.DateTime)
+    on_monday = db.Column(db.Boolean)
+    on_tuesday = db.Column(db.Boolean)
+    on_wednesday = db.Column(db.Boolean)
+    on_thursday = db.Column(db.Boolean)
+    on_friday = db.Column(db.Boolean)
+    on_saturday = db.Column(db.Boolean)
+    on_sunday = db.Column(db.Boolean)
+
+
 class ActivityChunk(db.Model):
     __tablename__ = "chunks"
     id = db.Column(db.Integer, primary_key=True)
     activity_id = db.Column(db.Integer)
     start_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
+    is_block = db.Column(db.Boolean, default=False)
 
     def __str__(self):
         return f"ActivityChunk(actId={self.activity_id}, start={self.start_time}, end={self.end_time})"
