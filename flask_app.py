@@ -240,7 +240,9 @@ def calendar():
     year = int(request.args.get("year", datetime.now().year))
     month = int(request.args.get("month", datetime.now().month))
     day = request.args.get("day")
-    if day is None:
+
+    if day is None: # Month view
+
         # Get which day of the week the first day of the month is
         # to offset the start of the calendar
         [first_day, num_days] = calend.monthrange(year, month)
@@ -259,7 +261,29 @@ def calendar():
             days.append(today)
 
         return render_template(
-            "calendar.html", month_view=True, first_day=first_day, days=days
+            "calendar.html",
+            month_view=True,
+            month_name=calend.month_name[month],
+            year=year,
+            month=month,
+            first_day=first_day,
+            days=days,
+            today=datetime.today().day
+        )
+    else: # Day view
+        day = int(day)
+        start_of_day = datetime(year, month, day)
+        end_of_day = start_of_day + timedelta(days=1)
+        chunks = ActivityChunk.query.filter(
+            ActivityChunk.start_time >= start_of_day,
+            ActivityChunk.end_time <= end_of_day,
+        )
+        chunksWithActs = []
+        for chunk in chunks:
+            activity = Activity.query.get(chunk.activity_id)
+            chunksWithActs.append((activity, chunk))
+        return render_template(
+            "calendar.html", month_view=False, year=year, month=month, chunksWithActs=chunksWithActs
         )
 
 
@@ -353,10 +377,32 @@ def add_activity():
         return redirect(url_for("whats_today"))
 
 
-@app.route("/add_block")
+@app.route("/add_block", methods=["GET", "POST"])
 @login_required
 def add_block():
-    return render_template("add_block.html")
+    if request.method == "GET":
+        return render_template("add_block.html")
+    else:
+        block = Block(
+            name = request.form["name"],
+            start_time = request.form.get("start_time"),
+            end_time = request.form.get("start_time"),
+            start_date = request.form.get("start_date"),
+            end_date = request.form.get("start_date"),
+            on_monday = request.form.get("on_monday", True),
+            on_tuesday = request.form.get("on_tuesday", True),
+            on_wednesday = request.form.get("on_wednesday", True),
+            on_thursday = request.form.get("on_thursday", True),
+            on_friday = request.form.get("on_friday", True),
+            on_saturday = request.form.get("on_saturday", True),
+            on_sunday = request.form.get("on_sunday", True),
+        )
+
+        db.session.add(block)
+
+        # todo add chunks
+
+        return redirect(url_for("whats_today"))
 
 
 @app.route("/settings", methods=["GET", "POST"])

@@ -15,27 +15,15 @@
     <!-- https://tailwindcomponents.com/component/calendar-ui-with-tailwindcss-and-alpinejs-->
 
     <script>
-        const months = [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"];
-        function getMonthName(month) {
-            return months[month - 1];
-        }
     </script>
 
     {% if month_view %}
         <div>
-            <p>{{ month }} </p>
+            <center>
+                <a href="{{url_for('calendar', year=prev_month_year, month=prev_month)}}"></a>
+                <p class="text-lg font-bold">{{ month_name }} </p>
+                <a href="{{url_for('calendar', year=next_month_year, month=next_month)}}"></a>
+            </center>
             <div class="grid grid-cols-7 content-center place-items-stretch bg-slate-300 gap-0.5">
                 <div class="bg-white">Monday</div>
                 <div class="bg-white">Tuesday</div>
@@ -50,11 +38,12 @@
                 {% endfor %}
                 {% for day in days %}
                     <div
-                        class="bg-white items-center place-items-center"
-                            ><center>
+                        class="bg-white p-1 items-center place-items-center">
+                        <center>
+                            <a href="{{url_for('calendar', year=year, month=month, day=loop.index0)}}">
                         <div class="
                             inline-flex
-                            w-6 h-6
+                            w-6 h-6 p-0.5
                             items-center
                             self-center
                             justify-center
@@ -65,14 +54,18 @@
                             transition
                             ease-in-out
                             duration-100
-                            bg-gray-200 hover:bg-gray-300
+                            {% if today == loop.index %}
+                                bg-blue-200 hover:bg-blue-300
+                            {% else %}
+                                bg-gray-200 hover:bg-gray-300
+                            {% endif %}
                             "
                             style="margin:0 auto;">
-                            {{loop.index0 + 1}}</div></center>
+                            {{loop.index}}</div>
+                            </a>
+                            </center>
                         {% for (activity, chunk) in day %}
                             <p>{{ activity.name }}</p>
-                            <p>{{ chunk.start_time.strftime('%H:%M') }}</p>
-                            <p>{{ chunk.end_time.strftime('%H:%M') }}</p>
                         {% endfor %}
                     </div>
                 {% endfor %}
@@ -82,10 +75,13 @@
             </div>
         </div>
     {% else %}
-        {% for activity in activities %}
-        <div>
-        </div>
-        {% endfor %}
+        <ul>
+            {% for (activity, chunk) in chunksWithActs %}
+                <li>
+                    <p>{{ activity.name }}: {{ chunk.start_time.strftime('%H:%M') }} to {{ chunk.end_time.strftime('%H:%M') }}</p>
+                </li>
+            {% endfor %}
+        </ul>
     {% endif %}
 
 </body>
