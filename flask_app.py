@@ -289,7 +289,10 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
                 chunk.end_time - prev_time
             ).total_seconds() // 60 - 2 * current_user.break_time
             # raise Exception(f"start:{start},end:{end},timediff:{time_diff}")
-            if time_diff >= current_user.chunk_time or time_needed < current_user.chunk_time:
+            if (
+                time_diff >= current_user.chunk_time
+                or time_needed < current_user.chunk_time
+            ):
                 chunk_time = min(time_needed, min(time_diff, max_time))
                 start_time = prev_time + timedelta(minutes=current_user.break_time)
                 end_time = start_time + timedelta(minutes=chunk_time)
@@ -320,13 +323,16 @@ def add_activity():
         name = request.form["name"][:ACTIVITY_NAME_LEN]
         desc = request.form.get("description", "")
         due = request.form.get("due")
-        start_date = request.form.get("start_date", datetime.now().strftime(DATE_FORMAT))
+        start_date = request.form.get(
+            "start_date", datetime.now().strftime(DATE_FORMAT)
+        )
         time_needed = request.form.get("time")
         max_time = request.form.get("max_time", time)
         schedule_activity(
             current_user.id, name, desc, due, start_date, time_needed, max_time
         )
         return redirect(url_for("whats_today"))
+
 
 @app.route("/add_block")
 @login_required

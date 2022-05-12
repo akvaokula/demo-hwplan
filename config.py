@@ -4,8 +4,10 @@ class Config:
     SQLALCHEMY_POOL_RECYCLE = 299
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+
 class DebugConfig(Config):
     DEBUG = True
+
 
 class ProductionConfig(Config):
     DEBUG = False
