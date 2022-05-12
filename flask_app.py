@@ -1,6 +1,6 @@
 import calendar as calend
 from collections import namedtuple
-from datetime import datetime, time, date, timedelta
+from datetime import datetime, time, timedelta
 from flask import (
     Flask,
     render_template,
@@ -327,6 +327,11 @@ def add_activity():
             current_user.id, name, desc, due, start_date, time_needed, max_time
         )
         return redirect(url_for("whats_today"))
+
+@app.route("/add_block")
+@login_required
+def add_block():
+    return render_template("add_block.html")
 
 
 @app.route("/settings", methods=["GET", "POST"])

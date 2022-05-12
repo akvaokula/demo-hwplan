@@ -1,40 +1,22 @@
 <ul class="float-left space-y-2 text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
-    <li class="mr-2">
-        <a href="{{url_for('whats_today')}}"
-        {% if request.url_rule.endpoint == "whats_today" or request.url_rule.endpoint == "index" %}
-            class="btn-tab-active"
-        {% else %}
-            class="btn-tab-inactive"
-        {% endif %}
-        >What's today</a>
-    </li>
-    <li class="mr-2">
-        <a href="{{url_for('calendar')}}"
-        {% if request.url_rule.endpoint == "calendar" %}
-            class="btn-tab-active"
-        {% else %}
-            class="btn-tab-inactive"
-        {% endif %}
-        >Calendar</a>
-    </li>
-    <li class="mr-2">
-        <a href="{{url_for('add_activity')}}"
-        {% if request.url_rule.endpoint == "add_activity" %}
-            class="btn-tab-active"
-        {% else %}
-            class="btn-tab-inactive"
-        {% endif %}
-        >Add activity</a>
-    </li>
-    <li class="mr-2">
-        <a href="{{url_for('settings')}}"
-        {% if request.url_rule.endpoint == "settings" %}
-            class="btn-tab-active"
-        {% else %}
-            class="btn-tab-inactive"
-        {% endif %}
-        >Settings</a>
-    </li>
+    {% macro tab(name, endpoint, endpoint2 = '') %}
+        <li class="mr-2">
+            <a href="{{url_for(endpoint)}}"
+            {% if request.url_rule.endpoint == endpoint or request.url_rule.endpoint == endpoint2 %}
+                class="btn-tab-active"
+            {% else %}
+                class="btn-tab-inactive"
+            {% endif %}
+            >{{name}}</a>
+        </li>
+    {% endmacro %}
+
+
+    {{ tab("What's today", 'whats_today', 'index') }}
+    {{ tab('Calendar', 'calendar') }}
+    {{ tab('Add activity', 'add_activity') }}
+    {{ tab('Add block', 'add_block') }}
+    {{ tab('Add Settings', 'settings') }}
     <li class="mr-2">
         <a href="{{url_for('logout')}}" class="btn-tab-inactive">Logout</a>
     </li>
