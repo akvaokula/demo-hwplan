@@ -63,8 +63,8 @@
                             {{loop.index}}</div>
                             </a>
                             </center>
-                        {% for (activity, chunk) in day %}
-                            <p>{{ activity.name }}</p>
+                        {% for (homework, chunk) in day %}
+                            <p>{{ homework.name }}</p>
                         {% endfor %}
                     </div>
                 {% endfor %}
@@ -75,9 +75,9 @@
         </div>
     {% else %}
         <ul>
-            {% for (activity, chunk) in chunksWithActs %}
+            {% for (homework, chunk) in chunksWithHomeworks %}
                 <li>
-                    <p>{{ activity.name }}: {{ chunk.start_time.strftime('%H:%M') }} to {{ chunk.end_time.strftime('%H:%M') }}</p>
+                    <p>{{ homework.name }}: {{ chunk.start_time.strftime('%H:%M') }} to {{ chunk.end_time.strftime('%H:%M') }}</p>
                 </li>
             {% endfor %}
         </ul>

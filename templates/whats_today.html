@@ -13,28 +13,28 @@
     {% include "components/sidebar.html" %}
 
     <script>
-        // function deleteActivity(elemId, activityId) {
-        //     alert(activityId);
-        //     postRequest("{{url_for('delete_activity')}}", activityId)
+        // function deleteHomework(elemId, homeworkId) {
+        //     alert(homeworkId);
+        //     postRequest("{{url_for('delete_homework')}}", homeworkId)
         //         .then(() => alert("Request completed"))
         // }
     </script>
 
-    {% for (activity, chunk) in chunkWithActs %}
+    {% for (homework, chunk) in chunkWithActs %}
     <div class="">
         <!-- todo this is kinda janky, figure out how to do it with plain JS -->
-        <form action="{{url_for('delete_activity')}}" method="POST">
-            <input id="activityId" name="activityId" type="hidden" value="{{activity.id}}">
+        <form action="{{url_for('delete_homework')}}" method="POST">
+            <input id="homeworkId" name="homeworkId" type="hidden" value="{{homework.id}}">
             <button
                 type="submit">
-                Delete activity
+                Delete homework
             </button>
         </form>
         <details>
-            <summary>Activity name: {{ activity.name }}</summary>
-            <p>Activity description:</p>
+            <summary>Homework name: {{ homework.name }}</summary>
+            <p>Homework description:</p>
             <p>{{ chunk }}</p>
-            <p>{{ activity.desc }}</p>
+            <p>{{ homework.desc }}</p>
         </details>
     </div>
     {% endfor %}

@@ -40,19 +40,19 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.unauthorized_handler(lambda: redirect("/login?next=" + request.path))
 
-ACTIVITY_NAME_LEN = 30
+HOMEWORK_NAME_LEN = 30
 USERNAME_MAX_LEN = 50
 WRONG_USERNAME_OR_PASSWORD = "Wrong username or password"
 DATE_FORMAT = "%Y-%m-%d"
 TIME_FORMAT = "%H:%M"
 
 
-class Activity(db.Model):
-    __tablename__ = "activities"
+class Homework(db.Model):
+    __tablename__ = "homeworks"
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
-    name = db.Column(db.String(ACTIVITY_NAME_LEN))
+    name = db.Column(db.String(HOMEWORK_NAME_LEN))
     desc = db.Column(db.String(4096))
     due = db.Column(db.DateTime, default=datetime.now)
     start_date = db.Column(db.Date)
@@ -60,13 +60,13 @@ class Activity(db.Model):
     max_time = db.Column(db.Integer)
 
 
-class Block(db.Model):
-    __tablename__ = "blocks"
+class Activity(db.Model):
+    __tablename__ = "activitys"
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
-    name = db.Column(db.String(ACTIVITY_NAME_LEN))
-    # This should actually be 2 fields. It combines the start date of the block and the start time
+    name = db.Column(db.String(HOMEWORK_NAME_LEN))
+    # This should actually be 2 fields. It combines the start date of the activity and the start time
     start_date_time = db.Column(db.DateTime)
     end_date_time = db.Column(db.DateTime)
     on_monday = db.Column(db.Boolean)
@@ -78,16 +78,16 @@ class Block(db.Model):
     on_sunday = db.Column(db.Boolean)
 
 
-class ActivityChunk(db.Model):
+class HomeworkChunk(db.Model):
     __tablename__ = "chunks"
     id = db.Column(db.Integer, primary_key=True)
-    activity_id = db.Column(db.Integer)
+    homework_id = db.Column(db.Integer)
     start_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
-    is_block = db.Column(db.Boolean, default=False)
+    is_activity = db.Column(db.Boolean, default=False)
 
     def __str__(self):
-        return f"ActivityChunk(actId={self.activity_id}, start={self.start_time}, end={self.end_time})"
+        return f"HomeworkChunk(actId={self.homework_id}, start={self.start_time}, end={self.end_time})"
 
 
 class User(db.Model, UserMixin):
@@ -97,9 +97,9 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(4096))
     username = db.Column(db.String(USERNAME_MAX_LEN))
     password_hash = db.Column(db.String(4096))
-    # An activity chunk can be no shorter than this (minutes)
+    # An homework chunk can be no shorter than this (minutes)
     break_time = 15
-    # How long to wait between activities
+    # How long to wait between homeworks
     chunk_time = 10
 
     def get_id(self):
@@ -109,7 +109,7 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password_hash, password)
 
 
-ChunkWithActivity = namedtuple("ChunkWithActivity", ["activity", "chunk"])
+ChunkWithHomework = namedtuple("ChunkWithHomework", ["homework", "chunk"])
 
 
 def is_valid_signature(x_hub_signature, data, private_key):
@@ -224,11 +224,11 @@ def favicon():
 def whats_today():
     if not current_user.is_authenticated:
         return redirect(url_for("index"))
-    activities = Activity.query.filter_by(user_id=current_user.id)
+    homeworks = Homework.query.filter_by(user_id=current_user.id)
     chunkWithActs = []
-    for activity in activities:
-        for chunk in ActivityChunk.query.filter_by(activity_id=activity.id):
-            chunkWithActs.append((activity, chunk))
+    for homework in homeworks:
+        for chunk in HomeworkChunk.query.filter_by(homework_id=homework.id):
+            chunkWithActs.append((homework, chunk))
     return render_template("whats_today.html", chunkWithActs=chunkWithActs)
 
 
@@ -251,13 +251,13 @@ def calendar():
             today = []
             start_of_day = datetime(year, month, day)
             end_of_day = start_of_day + timedelta(days=1)
-            chunks = ActivityChunk.query.filter(
-                ActivityChunk.start_time >= start_of_day,
-                ActivityChunk.end_time <= end_of_day,
+            chunks = HomeworkChunk.query.filter(
+                HomeworkChunk.start_time >= start_of_day,
+                HomeworkChunk.end_time <= end_of_day,
             )
             for chunk in chunks:
-                activity = Activity.query.get(chunk.activity_id)
-                today.append((activity, chunk))
+                homework = Homework.query.get(chunk.homework_id)
+                today.append((homework, chunk))
             days.append(today)
 
         return render_template(
@@ -278,14 +278,14 @@ def calendar():
         day = int(day)
         start_of_day = datetime(year, month, day)
         end_of_day = start_of_day + timedelta(days=1)
-        chunks = ActivityChunk.query.filter(
-            ActivityChunk.start_time >= start_of_day,
-            ActivityChunk.end_time <= end_of_day,
+        chunks = HomeworkChunk.query.filter(
+            HomeworkChunk.start_time >= start_of_day,
+            HomeworkChunk.end_time <= end_of_day,
         )
         chunksWithActs = []
         for chunk in chunks:
-            activity = Activity.query.get(chunk.activity_id)
-            chunksWithActs.append((activity, chunk))
+            homework = Homework.query.get(chunk.homework_id)
+            chunksWithActs.append((homework, chunk))
         return render_template(
             "calendar.html", month_view=False, year=year, month=month, chunksWithActs=chunksWithActs
         )
@@ -297,11 +297,11 @@ def daterange(start_date, end_date):
         yield start_date + timedelta(n)
 
 
-def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
+def schedule_homework(id, name, desc, due, start_date, time_needed, max_time):
     due = datetime.strptime(due, f"{DATE_FORMAT}T{TIME_FORMAT}")
     start_date = datetime.strptime(start_date, DATE_FORMAT).date()
 
-    activity = Activity(
+    homework = Homework(
         user_id=current_user.id,
         name=name,
         desc=desc,
@@ -310,7 +310,7 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
         time_needed=time_needed,
         max_time=max_time,
     )
-    db.session.add(activity)
+    db.session.add(homework)
 
     time_needed = int(time_needed)
     max_time = int(max_time)
@@ -318,15 +318,15 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
     it = 1
     while time_needed > 0 and curr_date < due.date():
         it += 1
-        chunks = ActivityChunk.query.filter_by(activity_id=activity.id).order_by(
-            ActivityChunk.start_time
+        chunks = HomeworkChunk.query.filter_by(homework_id=homework.id).order_by(
+            HomeworkChunk.start_time
         )
         # Start at midnight
         prev_time = datetime.combine(curr_date, time(0, 0, 0))
         # Add a dummy chunk for the end of the day
         chunks = list(chunks) + [
-            ActivityChunk(
-                activity_id=activity.id,
+            HomeworkChunk(
+                homework_id=homework.id,
                 start_time=datetime.combine(curr_date, time(23, 0, 0)),
                 end_time=datetime.combine(curr_date, time(23, 0, 0)),
             )
@@ -343,8 +343,8 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
                 chunk_time = min(time_needed, min(time_diff, max_time))
                 start_time = prev_time + timedelta(minutes=current_user.break_time)
                 end_time = start_time + timedelta(minutes=chunk_time)
-                new_chunk = ActivityChunk(
-                    activity_id=activity.id,
+                new_chunk = HomeworkChunk(
+                    homework_id=homework.id,
                     start_time=start_time,
                     end_time=end_time,
                 )
@@ -359,15 +359,15 @@ def schedule_activity(id, name, desc, due, start_date, time_needed, max_time):
     db.session.commit()
 
 
-@app.route("/add_activity", methods=["GET", "POST"])
+@app.route("/add_homework", methods=["GET", "POST"])
 @login_required
-def add_activity():
+def add_homework():
     if not current_user.is_authenticated:
         return redirect(url_for("index"))
     elif request.method == "GET":
-        return render_template("add_activity.html", now=datetime.now())
+        return render_template("add_homework.html", now=datetime.now())
     else:
-        name = request.form["name"][:ACTIVITY_NAME_LEN]
+        name = request.form["name"][:HOMEWORK_NAME_LEN]
         desc = request.form.get("description", "")
         due = request.form.get("due")
         start_date = request.form.get(
@@ -375,19 +375,19 @@ def add_activity():
         )
         time_needed = request.form.get("time")
         max_time = request.form.get("max_time", time)
-        schedule_activity(
+        schedule_homework(
             current_user.id, name, desc, due, start_date, time_needed, max_time
         )
         return redirect(url_for("whats_today"))
 
 
-@app.route("/add_block", methods=["GET", "POST"])
+@app.route("/add_activity", methods=["GET", "POST"])
 @login_required
-def add_block():
+def add_activity():
     if request.method == "GET":
-        return render_template("add_block.html")
+        return render_template("add_activity.html")
     else:
-        block = Block(
+        activity = Activity(
             name = request.form["name"],
             start_time = request.form.get("start_time"),
             end_time = request.form.get("start_time"),
@@ -402,7 +402,7 @@ def add_block():
             on_sunday = request.form.get("on_sunday", True),
         )
 
-        db.session.add(block)
+        db.session.add(activity)
 
         # todo add chunks
 
@@ -432,22 +432,22 @@ def logout():
     return redirect(url_for("index"))
 
 
-@app.route("/edit_activity", methods=["POST"])
+@app.route("/edit_homework", methods=["POST"])
 @login_required
-def edit_activity(name, desc, due):
+def edit_homework(name, desc, due):
     pass
 
 
-@app.route("/delete_activity", methods=["POST"])
+@app.route("/delete_homework", methods=["POST"])
 @login_required
-def delete_activity():
-    activity_id = request.form.get("activityId")
-    if activity_id is not None:
-        Activity.query.filter_by(id=activity_id, user_id=current_user.id).delete()
-        ActivityChunk.query.filter_by(activity_id=activity_id).delete()
+def delete_homework():
+    homework_id = request.form.get("homeworkId")
+    if homework_id is not None:
+        Homework.query.filter_by(id=homework_id, user_id=current_user.id).delete()
+        HomeworkChunk.query.filter_by(homework_id=homework_id).delete()
         db.session.commit()
     else:
-        flash("Activity id not given when deleting", "alert")
+        flash("Homework id not given when deleting", "alert")
     return redirect(url_for("whats_today"))
 
 
