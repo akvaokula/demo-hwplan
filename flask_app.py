@@ -78,7 +78,7 @@ class Activity(db.Model):
     on_sunday = db.Column(db.Boolean)
 
 
-class HomeworkChunk(db.Model):
+class Chunk(db.Model):
     __tablename__ = "chunks"
     id = db.Column(db.Integer, primary_key=True)
     homework_id = db.Column(db.Integer)
@@ -87,7 +87,7 @@ class HomeworkChunk(db.Model):
     is_activity = db.Column(db.Boolean, default=False)
 
     def __str__(self):
-        return f"HomeworkChunk(actId={self.homework_id}, start={self.start_time}, end={self.end_time})"
+        return f"Chunk(actId={self.homework_id}, start={self.start_time}, end={self.end_time})"
 
 
 class User(db.Model, UserMixin):
@@ -227,7 +227,7 @@ def whats_today():
     homeworks = Homework.query.filter_by(user_id=current_user.id)
     chunkWithActs = []
     for homework in homeworks:
-        for chunk in HomeworkChunk.query.filter_by(homework_id=homework.id):
+        for chunk in Chunk.query.filter_by(homework_id=homework.id):
             chunkWithActs.append((homework, chunk))
     return render_template("whats_today.html", chunkWithActs=chunkWithActs)
 
@@ -252,9 +252,9 @@ def calendar():
             today = []
             start_of_day = datetime(year, month, day)
             end_of_day = start_of_day + timedelta(days=1)
-            chunks = HomeworkChunk.query.filter(
-                HomeworkChunk.start_time >= start_of_day,
-                HomeworkChunk.end_time <= end_of_day,
+            chunks = Chunk.query.filter(
+                Chunk.start_time >= start_of_day,
+                Chunk.end_time <= end_of_day,
             )
             for chunk in chunks:
                 homework = Homework.query.get(chunk.homework_id)
@@ -281,9 +281,9 @@ def calendar():
         day = int(day)
         start_of_day = datetime(year, month, day)
         end_of_day = start_of_day + timedelta(days=1)
-        chunks = HomeworkChunk.query.filter(
-            HomeworkChunk.start_time >= start_of_day,
-            HomeworkChunk.end_time <= end_of_day,
+        chunks = Chunk.query.filter(
+            Chunk.start_time >= start_of_day,
+            Chunk.end_time <= end_of_day,
         )
         chunksWithActs = []
         for chunk in chunks:
@@ -327,14 +327,14 @@ def schedule_homework(name, desc, due, start_date, time_needed, max_time):
     while time_needed > 0 and curr_date < due.date():
         day_start = datetime.combine(curr_date, time(0, 0, 0))
         day_end = day_start + timedelta(days=1)
-        chunks = HomeworkChunk.query.filter(HomeworkChunk.start_time >= day_start, HomeworkChunk.end_time <= day_end).order_by(
-            HomeworkChunk.start_time
+        chunks = Chunk.query.filter(Chunk.start_time >= day_start, Chunk.end_time <= day_end).order_by(
+            Chunk.start_time
         )
         # Start at midnight
         prev_time = day_start
         # Add a dummy chunk for the end of the day
         chunks = list(chunks) + [
-            HomeworkChunk(
+            Chunk(
                 homework_id=homework.id,
                 start_time=datetime.combine(curr_date, time(23, 0, 0)),
                 end_time=datetime.combine(curr_date, time(23, 0, 0)),
@@ -352,7 +352,7 @@ def schedule_homework(name, desc, due, start_date, time_needed, max_time):
                 chunk_time = min(time_needed, min(time_diff, max_time))
                 start_time = prev_time + timedelta(minutes=current_user.break_time)
                 end_time = start_time + timedelta(minutes=chunk_time)
-                new_chunk = HomeworkChunk(
+                new_chunk = Chunk(
                     homework_id=homework.id,
                     start_time=start_time,
                     end_time=end_time,
@@ -460,7 +460,7 @@ def delete_homework():
     homework_id = request.form.get("homeworkId")
     if homework_id is not None:
         Homework.query.filter_by(id=homework_id, user_id=current_user.id).delete()
-        HomeworkChunk.query.filter_by(homework_id=homework_id).delete()
+        Chunk.query.filter_by(homework_id=homework_id).delete()
         db.session.commit()
     else:
         flash("Homework id not given when deleting", "alert")
