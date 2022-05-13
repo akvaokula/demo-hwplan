@@ -240,8 +240,9 @@ def calendar():
     year = int(request.args.get("year", datetime.now().year))
     month = int(request.args.get("month", datetime.now().month))
     day = request.args.get("day")
+    month_name = calend.month_name[month]
 
-    if day is None: # Month view
+    if day is None:  # Month view
 
         # Get which day of the week the first day of the month is
         # to offset the start of the calendar
@@ -263,18 +264,20 @@ def calendar():
         return render_template(
             "calendar.html",
             month_view=True,
-            month_name=calend.month_name[month],
+            month_name=month_name,
             year=year,
             month=month,
-            prev_month_year = year - 1 if month == 1 else year,
-            prev_month = 12 if month == 1 else month - 1,
-            next_month_year = year + 1 if month == 12 else year,
-            next_month = 1 if month == 12 else month + 1,
+            prev_month_year=year - 1 if month == 1 else year,
+            prev_month=12 if month == 1 else month - 1,
+            next_month_year=year + 1 if month == 12 else year,
+            next_month=1 if month == 12 else month + 1,
             first_day=first_day,
             days=days,
-            today=datetime.today().day if datetime.today().year == year and datetime.today().month == month else 0
+            today=datetime.today().day
+            if datetime.today().year == year and datetime.today().month == month
+            else 0,
         )
-    else: # Day view
+    else:  # Day view
         day = int(day)
         start_of_day = datetime(year, month, day)
         end_of_day = start_of_day + timedelta(days=1)
@@ -287,7 +290,13 @@ def calendar():
             homework = Homework.query.get(chunk.homework_id)
             chunksWithActs.append((homework, chunk))
         return render_template(
-            "calendar.html", month_view=False, year=year, month=month, chunksWithActs=chunksWithActs
+            "calendar.html",
+            month_view=False,
+            year=year,
+            month=month,
+            day=day,
+            month_name=month_name,
+            chunksWithActs=chunksWithActs,
         )
 
 
@@ -297,7 +306,7 @@ def daterange(start_date, end_date):
         yield start_date + timedelta(n)
 
 
-def schedule_homework(id, name, desc, due, start_date, time_needed, max_time):
+def schedule_homework(name, desc, due, start_date, time_needed, max_time):
     due = datetime.strptime(due, f"{DATE_FORMAT}T{TIME_FORMAT}")
     start_date = datetime.strptime(start_date, DATE_FORMAT).date()
 
@@ -315,14 +324,14 @@ def schedule_homework(id, name, desc, due, start_date, time_needed, max_time):
     time_needed = int(time_needed)
     max_time = int(max_time)
     curr_date = start_date
-    it = 1
     while time_needed > 0 and curr_date < due.date():
-        it += 1
-        chunks = HomeworkChunk.query.filter_by(homework_id=homework.id).order_by(
+        day_start = datetime.combine(curr_date, time(0, 0, 0))
+        day_end = day_start + timedelta(days=1)
+        chunks = HomeworkChunk.query.filter(HomeworkChunk.start_time >= day_start, HomeworkChunk.end_time <= day_end).order_by(
             HomeworkChunk.start_time
         )
         # Start at midnight
-        prev_time = datetime.combine(curr_date, time(0, 0, 0))
+        prev_time = day_start
         # Add a dummy chunk for the end of the day
         chunks = list(chunks) + [
             HomeworkChunk(
@@ -375,9 +384,7 @@ def add_homework():
         )
         time_needed = request.form.get("time")
         max_time = request.form.get("max_time", time)
-        schedule_homework(
-            current_user.id, name, desc, due, start_date, time_needed, max_time
-        )
+        schedule_homework(name, desc, due, start_date, time_needed, max_time)
         return redirect(url_for("whats_today"))
 
 
@@ -387,26 +394,35 @@ def add_activity():
     if request.method == "GET":
         return render_template("add_activity.html")
     else:
+        start_date = request.form.get("start_date")
         activity = Activity(
-            name = request.form["name"],
-            start_time = request.form.get("start_time"),
-            end_time = request.form.get("start_time"),
-            start_date = request.form.get("start_date"),
-            end_date = request.form.get("start_date"),
-            on_monday = request.form.get("on_monday", True),
-            on_tuesday = request.form.get("on_tuesday", True),
-            on_wednesday = request.form.get("on_wednesday", True),
-            on_thursday = request.form.get("on_thursday", True),
-            on_friday = request.form.get("on_friday", True),
-            on_saturday = request.form.get("on_saturday", True),
-            on_sunday = request.form.get("on_sunday", True),
+            name=request.form["name"],
+            start_time=request.form.get("start_time"),
+            end_time=request.form.get("start_time"),
+            start_date=start_date,
+            end_date=request.form.get("start_date"),
+            on_monday=request.form.get("on_monday", True),
+            on_tuesday=request.form.get("on_tuesday", True),
+            on_wednesday=request.form.get("on_wednesday", True),
+            on_thursday=request.form.get("on_thursday", True),
+            on_friday=request.form.get("on_friday", True),
+            on_saturday=request.form.get("on_saturday", True),
+            on_sunday=request.form.get("on_sunday", True),
         )
 
+        start_date = datetime.strptime(start_date, DATE_FORMAT)
+
         db.session.add(activity)
+        db.session.commit()
+        update_activities(start_date)
 
         # todo add chunks
 
         return redirect(url_for("whats_today"))
+
+
+def update_activities(start_date: datetime):
+    pass
 
 
 @app.route("/settings", methods=["GET", "POST"])

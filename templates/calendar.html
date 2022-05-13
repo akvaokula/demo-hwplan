@@ -37,7 +37,7 @@
 
                 {% for day in days %}
                     <div
-                        class="bg-white p-1 items-center place-items-center">
+                        class="bg-white p-1 items-center place-items-center rounded-lg">
                         <center>
                             <a href="{{url_for('calendar', year=year, month=month, day=loop.index)}}">
                         <div class="
@@ -74,8 +74,10 @@
             </div>
         </div>
     {% else %}
-        <ul>
-            {% for (homework, chunk) in chunksWithHomeworks %}
+        <p>{{month}} {{day}}, {{year}}</p>
+        <a href="{{url_for('calendar', year=year, month=month)}}" class="link">Back to {{month_name}}</a>
+        <ul class="list-disc">
+            {% for (homework, chunk) in chunksWithActs %}
                 <li>
                     <p>{{ homework.name }}: {{ chunk.start_time.strftime('%H:%M') }} to {{ chunk.end_time.strftime('%H:%M') }}</p>
                 </li>
