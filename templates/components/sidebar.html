@@ -1,11 +1,16 @@
-<ul class="float-left space-y-2 text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+<ul class="
+        flex flex-col
+        float-left
+        h-screen
+        space-y-2
+        text-sm font-medium text-center text-gray-500 dark:text-gray-400">
     {% macro tab(name, endpoint, endpoint2 = '') %}
         <li class="mr-2">
             <a href="{{url_for(endpoint)}}"
             {% if request.url_rule.endpoint == endpoint or request.url_rule.endpoint == endpoint2 %}
-                class="btn-tab-active"
+                class="btn-tab-active w-full"
             {% else %}
-                class="btn-tab-inactive"
+                class="btn-tab-inactive w-full"
             {% endif %}
             >{{name}}</a>
         </li>
