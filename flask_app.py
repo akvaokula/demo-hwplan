@@ -61,7 +61,7 @@ class Homework(db.Model):
 
 
 class Activity(db.Model):
-    __tablename__ = "activitys"
+    __tablename__ = "activities"
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
