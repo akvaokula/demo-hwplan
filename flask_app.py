@@ -58,6 +58,7 @@ class Homework(db.Model):
     start_date = db.Column(db.Date)
     time_needed = db.Column(db.Integer)
     max_time = db.Column(db.Integer)
+    priority = db.Column(db.Integer, default=0)
 
 
 class Activity(db.Model):
@@ -305,26 +306,19 @@ def daterange(start_date, end_date):
     for n in range(int((end_date - start_date).days)):
         yield start_date + timedelta(n)
 
+def reschedule_homework(start_date: datetime.date):
+    homeworks = Homework.query.filter(Homework.due.date() >= start_date)
+    for homework in homeworks:
+        Chunk.query.filter_by(homework_id=homework.id).delete()
+    db.session.commit()
+    for homework in homeworks:
+        schedule_homework(homework)
 
-def schedule_homework(name, desc, due, start_date, time_needed, max_time):
-    due = datetime.strptime(due, f"{DATE_FORMAT}T{TIME_FORMAT}")
-    start_date = datetime.strptime(start_date, DATE_FORMAT).date()
-
-    homework = Homework(
-        user_id=current_user.id,
-        name=name,
-        desc=desc,
-        due=due.strftime(f"{DATE_FORMAT} {TIME_FORMAT}"),
-        # start_date=start_date.strftime(DATE_FORMAT),
-        time_needed=time_needed,
-        max_time=max_time,
-    )
-    db.session.add(homework)
-
-    time_needed = int(time_needed)
-    max_time = int(max_time)
-    curr_date = start_date
-    while time_needed > 0 and curr_date < due.date():
+def schedule_homework(homework: Homework):
+    time_needed = homework.time_needed
+    max_time = homework.max_time
+    curr_date = homework.start_date
+    while time_needed > 0 and curr_date < homework.due.date():
         day_start = datetime.combine(curr_date, time(0, 0, 0))
         day_end = day_start + timedelta(days=1)
         chunks = Chunk.query.filter(Chunk.start_time >= day_start, Chunk.end_time <= day_end).order_by(
@@ -384,7 +378,19 @@ def add_homework():
         )
         time_needed = request.form.get("time")
         max_time = request.form.get("max_time", time)
-        schedule_homework(name, desc, due, start_date, time_needed, max_time)
+        start_date = datetime.strptime(start_date, DATE_FORMAT).date()
+        homework = Homework(
+            user_id=current_user.id,
+            name=name,
+            desc=desc,
+            due=datetime.strptime(due, f"{DATE_FORMAT}T{TIME_FORMAT}").strftime(f"{DATE_FORMAT} {TIME_FORMAT}"),
+            start_date=start_date.strftime(DATE_FORMAT),
+            time_needed=time_needed,
+            max_time=max_time,
+        )
+        db.session.add(homework)
+        db.session.commit()
+        schedule_homework(homework)
         return redirect(url_for("whats_today"))
 
 

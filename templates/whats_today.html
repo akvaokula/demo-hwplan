@@ -19,9 +19,15 @@
         //         .then(() => alert("Request completed"))
         // }
     </script>
-
+    <h1 style="text-size: 40px; text-align: center"> Today's Schedule: </h1>
     {% for (homework, chunk) in chunkWithActs %}
     <div class="">
+        <details>
+            <summary>Homework name: {{ homework.name }}</summary>
+            <p style="text-size: 25px; text-align: center">Homework description:</p>
+            <p style="text-size: 25px; text-align: center">{{ homework.desc }}</p>
+            <p style="text-size: 25px; text-align: center">Due: {{ homework.due }}</p>
+        </details>
         <!-- todo this is kinda janky, figure out how to do it with plain JS -->
         <form action="{{url_for('delete_homework')}}" method="POST">
             <input id="homeworkId" name="homeworkId" type="hidden" value="{{homework.id}}">
@@ -30,13 +36,6 @@
                 Delete homework
             </button>
         </form>
-        <details>
-            <summary>Homework name: {{ homework.name }}</summary>
-            <p>Homework description:</p>
-            <p>{{ chunk }}</p>
-            <p></p>
-            <p>{{ homework.desc }}</p>
-        </details>
     </div>
     {% endfor %}
 </body>

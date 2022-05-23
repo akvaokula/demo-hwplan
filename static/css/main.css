@@ -567,6 +567,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   float: left;
 }
 
+.m-1 {
+  margin: 0.25rem;
+}
+
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -623,8 +627,8 @@ Ensure the default browser behavior of the `hidden` attribute.
   cursor: pointer;
 }
 
-.list-disc {
-  list-style-type: disc;
+.list-none {
+  list-style-type: none;
 }
 
 .appearance-none {

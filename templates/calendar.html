@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.5">
     <title>Homework planner - Calendar</title>
     <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}">
 </head>
@@ -74,14 +74,17 @@
             </div>
         </div>
     {% else %}
-        <p>{{month_name}} {{day}}, {{year}}</p>
-        <a href="{{url_for('calendar', year=year, month=month)}}" class="link">Back to {{month_name}}</a>
-        <ul class="list-disc">
+        <style>
+        </style>
+        <h1 style="text-align: center; font-size: 25px">{{month_name}} {{day}}, {{year}}</p>
+        <ul class="list-none">
             {% for (homework, chunk) in chunksWithActs %}
-                <li>
-                    <p>{{ homework.name }}: {{ chunk.start_time.strftime('%H:%M') }} to {{ chunk.end_time.strftime('%H:%M') }}</p>
+                <li class="m-1">
+                    <p style="text-align: center; font-size: 20px">{{ homework.name }}: {{ chunk.start_time.strftime('%H:%M') }} to {{ chunk.end_time.strftime('%H:%M') }}</p>
+                    <p style="text-align: center; font-size: 20px">{{ homework.desc }}</p>
                 </li>
             {% endfor %}
+            <a href="{{url_for('calendar', year=year, month=month)}}" class="link">Back to {{month_name}}</a>
         </ul>
     {% endif %}
 
