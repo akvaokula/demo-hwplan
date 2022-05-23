@@ -1,0 +1,413 @@
+
+.notifications {
+  align-items: flex-start;
+  background-color: var(--white);
+  display: flex;
+  width: 14136px;
+}
+
+.hidden,
+.hidden * {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.scrollbar {
+  align-items: flex-end;
+  display: flex;
+  height: 4000px;
+  justify-content: flex-end;
+  left: 12897px;
+  min-width: 320px;
+  position: fixed;
+  top: 770px;
+  z-index: 3;
+}
+
+.overlap-group7 {
+  height: 10000px;
+  margin-bottom: -6074px;
+  position: relative;
+  width: 340px;
+}
+
+.rectangle-39 {
+  background-color: 
+#b8b8b8;
+  height: 4000px;
+  left: 20px;
+  position: absolute;
+  top: 359px;
+  width: 320px;
+}
+
+.down-arrow {
+  align-items: flex-end;
+  display: flex;
+  height: 74px;
+  left: 64px;
+  min-width: 177px;
+  position: absolute;
+  top: 9865px;
+  transform: rotate(-180deg);
+}
+
+.line-18 {
+  height: 66px;
+  margin-bottom: -66.46px;
+  margin-left: 171px;
+  width: 1px;
+}
+
+.line-17 {
+  height: 82px;
+  margin-bottom: -81.79px;
+  margin-left: -92px;
+  width: 98px;
+}
+
+.rectangle-42 {
+  background-color: 
+#dfdfdf;
+  height: 10000px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 320px;
+}
+
+.overlap-group-1 {
+  align-items: flex-start;
+  background-image: url(https://anima-uploads.s3.amazonaws.com/projects/627128a7a277ddf9c4ec6932/releases/6273c0c14e73b2fe35106031/img/line-17-2@2x.png);
+  background-size: 100% 100%;
+  display: flex;
+  height: 82px;
+  justify-content: flex-end;
+  left: 75px;
+  min-width: 98px;
+  padding: 0px 5.3px;
+  position: absolute;
+  top: 33px;
+}
+
+.line-18-1 {
+  height: 66px;
+  width: 1px;
+}
+
+.overlap-group8 {
+  height: 11058px;
+  position: relative;
+  width: 14136px;
+  z-index: 1;
+}
+
+.valign-text-bottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.name-of-assignment {
+  height: 485px;
+  left: 4358px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 2256px;
+  width: 3656px;
+}
+
+.project {
+  height: 497px;
+  left: 4462px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 5017px;
+  width: 1432px;
+}
+
+.rectangle-3 {
+  background-color: var(--lavender);
+  height: 577px;
+  left: 4366px;
+  position: absolute;
+  top: 4977px;
+  width: 1616px;
+}
+
+.page-template {
+  align-items: flex-start;
+  background-color: var(--white);
+  display: flex;
+  height: 11058px;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  width: 14136px;
+}
+
+.overlap-group6 {
+  align-items: flex-end;
+  background-color: var(--white);
+  display: flex;
+  height: 11058px;
+  margin-left: -40px;
+  min-width: 11936px;
+  padding: 1538px 40px;
+}
+
+.sidebar {
+  align-items: flex-start;
+  background-color: var(--white);
+  border-radius: 100px;
+  display: flex;
+  flex-direction: column;
+  height: 7981px;
+  overflow: hidden;
+  width: 3450px;
+}
+
+.overlap-group5 {
+  height: 1160px;
+  margin-left: 4px;
+  margin-top: 205px;
+  position: relative;
+  width: 4202px;
+}
+
+.notifications-1 {
+  left: 232px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 258px;
+  width: 3970px;
+}
+
+.sidebar-rectangle {
+  background-color: var(--persian-green);
+  border-radius: 100px;
+  height: 1160px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 3450px;
+}
+
+.overlap-group4 {
+  align-items: flex-start;
+  background-color: var(--persian-green);
+  border-radius: 100px;
+  display: flex;
+  height: 1160px;
+  justify-content: flex-end;
+  margin-top: 195px;
+  min-width: 3450px;
+  padding: 229px 88px;
+}
+
+.add-activity {
+  letter-spacing: 0;
+  min-height: 559px;
+  width: 3126px;
+}
+
+.overlap-group2 {
+  height: 1160px;
+  margin-left: 4px;
+  margin-top: 195px;
+  position: relative;
+  width: 4134px;
+}
+
+.calendar {
+  left: 232px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 331px;
+  width: 3902px;
+}
+
+.overlap-group {
+  align-items: flex-end;
+  background-color: var(--persian-green);
+  border-radius: 100px;
+  display: flex;
+  height: 1160px;
+  justify-content: flex-end;
+  margin-top: -141px;
+  min-width: 3450px;
+  padding: 249px 228px;
+}
+
+.whats-today {
+  letter-spacing: 0;
+  min-height: 609px;
+  width: 2986px;
+}
+
+.overlap-group3 {
+  height: 1160px;
+  margin-top: 200px;
+  position: relative;
+  width: 3835px;
+}
+
+.teachers {
+  left: 168px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 235px;
+  width: 3667px;
+}
+
+.overlap-group1 {
+  height: 1160px;
+  margin-top: 195px;
+  position: relative;
+  width: 3609px;
+}
+
+.settings {
+  left: 236px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 298px;
+  width: 3373px;
+}
+
+.rectangle-34 {
+  background-color: 
+#87c1f7;
+  height: 543px;
+  left: 4389px;
+  position: absolute;
+  top: 1713px;
+  width: 1505px;
+}
+
+.description-1 {
+  height: 938px;
+  left: 4413px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 9076px;
+}
+
+.description-2 {
+  height: 938px;
+  left: 4412px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 2791px;
+}
+
+.name-of-assignment-2 {
+  height: 485px;
+  left: 4412px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 8621px;
+  width: 3656px;
+}
+
+.essay {
+  -webkit-text-stroke: 1px var(--black);
+  height: 469px;
+  left: 4411px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 1766px;
+}
+
+.description {
+  height: 938px;
+  left: 4358px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 6149px;
+}
+
+.description-3 {
+  height: 938px;
+  left: 4412px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 2791px;
+  width: 5042px;
+}
+
+.name-of-assignment-1 {
+  height: 485px;
+  left: 4358px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 5530px;
+  width: 3656px;
+}
+
+.rectangle-35 {
+  height: 2802px;
+  left: 4204px;
+  position: absolute;
+  top: 4827px;
+  width: 7583px;
+}
+
+.activity {
+  height: 469px;
+  left: 4412px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 8149px;
+}
+
+.duededwork {
+  height: 469px;
+  left: 8580px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 6853px;
+}
+
+.rectangle-40 {
+  background-color: 
+#c4c4c4;
+  height: 431px;
+  left: 4387px;
+  position: absolute;
+  top: 8170px;
+  width: 1490px;
+}
+
+.rectangle-37 {
+  height: 2787px;
+  left: 4204px;
+  position: absolute;
+  top: 7981px;
+  width: 7583px;
+}
+
+.rectangle-33 {
+  height: 2787px;
+  left: 4204px;
+  position: absolute;
+  top: 1582px;
+  width: 7583px;
+}
+
+.duededwork-1 {
+  height: 469px;
+  left: 8477px;
+  letter-spacing: 0;
+  position: absolute;
+  top: 3423px;
+}
+
+.title {
+  left: 3888px;
+  letter-spacing: 0;
+  position: fixed;
+  top: 274px;
+  z-index: 2;
+}
